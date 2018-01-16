@@ -17,7 +17,7 @@ Then you can import and use the `SOM` class as follows:
 import numpy as np
 from som import SOM
 
-data = np.random.random((1000, 36)  # generate some random data with 36 features
+data = np.random.random((1000, 36))  # generate some random data with 36 features
 
 som = SOM(10, 10)  # initialize the SOM
 som.fit(data, 2000)  # fit the SOM for 2000 epochs
@@ -26,6 +26,19 @@ targets = 500 * [0] + 500 * [1]  # create some dummy target values
 # now visualize the learned representation with the class labels
 som.plot_point_map(data, targets, ['class 1', 'class 2'], filename='som.png')
 ```
+The same way you can handle your own data.
+
+The `SOM` class has the following methods:
+- `winner`
+- `cycle`
+- `fit`
+- `transform`
+- `distance_map`
+- `winner_map`
+- `som_error`
+- `plot_point_map`
+- `plot_density_map`
+
 
 ### References:
 (1) Kohonen, T. Self-Organized Formation of Topologically Correct Feature Maps. Biol. Cybern. 1982, 43 (1), 59–69.
