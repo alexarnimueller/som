@@ -42,3 +42,5 @@ The `SOM` class has the following methods:
 
 ### References:
 (1) Kohonen, T. Self-Organized Formation of Topologically Correct Feature Maps. Biol. Cybern. 1982, 43 (1), 59–69.
+
+This work was partially inspired by [ramalina's som implementation](https://github.com/ramarlina/som "ramarlina's som github repo") and [JustGlowing's minisom](https://github.com/JustGlowing/minisom "JustGlowing's minisom github repo").
