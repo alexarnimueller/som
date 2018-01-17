@@ -177,7 +177,7 @@ class SOM(object):
         legend.get_frame().set_facecolor('#e5e5e5')
 
         if density:
-            self.plot_density_map(data)
+            self.plot_density_map(data, internal=True)
             # wm = self.winner_map(data)
             # plt.gray()
             # plt.pcolor(wm.T)
@@ -189,11 +189,12 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_density_map(self, data, filename=None):
+    def plot_density_map(self, data, filename=None, internal=False):
         """ Visualize the data density in different areas of the SOM.
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param filename: {str} optional, if given, the plot is saved to this location
+        :param internal: {bool} if True, the current plot will stay open to be used for other plot functions
         :return: plot shown or saved if a filename is given
         """
         wm = self.winner_map(data)
@@ -202,10 +203,10 @@ class SOM(object):
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
-
-        if filename:
-            plt.savefig(filename)
-            plt.close()
-            print("Done!")
-        else:
-            plt.show()
+        if not internal:
+            if filename:
+                plt.savefig(filename)
+                plt.close()
+                print("Done!")
+            else:
+                plt.show()
