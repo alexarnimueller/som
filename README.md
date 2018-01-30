@@ -17,7 +17,10 @@ Then you can import and use the `SOM` class as follows:
 import numpy as np
 from som import SOM
 
-data = np.random.random((1000, 36))  # generate some random data with 36 features
+# generate some random data with 36 features
+data1 = np.random.normal(loc=-.25, scale=1., size=(500, 36))
+data2 = np.random.normal(loc=.25, scale=1., size=(500, 36))
+data = np.vstack((data1, data2))
 
 som = SOM(10, 10)  # initialize the SOM
 som.fit(data, 2000)  # fit the SOM for 2000 epochs
