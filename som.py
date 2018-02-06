@@ -159,8 +159,10 @@ class SOM(object):
             markers = ['o', 'o', 'o', 'o', 'o']
         if not colors:
             colors = ['#ffa100', '#e900ff', '#00ffe1', '#ff0008', '#00ff19']
-
-        fig, ax = plt.subplots(figsize=self.shape)
+        if density:
+            fig, ax = self.plot_density_map(data, internal=True)
+        else:
+            fig, ax = plt.subplots(figsize=self.shape)
         for cnt, xx in enumerate(data):
             w = self.winner(xx)
             ax.plot(w[0] + .5 + 0.15 * np.random.randn(1), w[1] + .5 + 0.15 * np.random.randn(1),
@@ -176,12 +178,6 @@ class SOM(object):
                             borderaxespad=0.1)
         legend.get_frame().set_facecolor('#e5e5e5')
 
-        if density:
-            self.plot_density_map(data, internal=True)
-            # wm = self.winner_map(data)
-            # plt.gray()
-            # plt.pcolor(wm.T)
-            # plt.colorbar()
         if filename:
             plt.savefig(filename)
             plt.close()
@@ -198,11 +194,13 @@ class SOM(object):
         :return: plot shown or saved if a filename is given
         """
         wm = self.winner_map(data)
+        fig, ax = plt.subplots(figsize=self.shape)
         plt.gray()
-        plt.pcolor(wm.T)
+        plt.pcolormesh(wm.T)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
+        ax.set_aspect('equal')
         if not internal:
             if filename:
                 plt.savefig(filename)
@@ -210,3 +208,32 @@ class SOM(object):
                 print("Done!")
             else:
                 plt.show()
+        else:
+            return fig, ax
+
+    def plot_class_density(self, data, targets, t, colormap='Oranges', filename=None):
+        """ Plot a density map only for the given class name
+
+        :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
+        :param targets: {list/array} array of target classes (0 to len(targetnames)) corresponding to data
+        :param t: {int} target class to plot the density map for
+        :param colormap: {str} colormap to use, select from matplolib sequential colormaps
+        :param filename: {str} optional, if given, the plot is saved to this location
+        :return: plot shown or saved if a filename is given
+        """
+        t_data = data[np.where(targets == t)[0]]
+        wm = self.winner_map(t_data)
+        fig, ax = plt.subplots(figsize=self.shape)
+        plt.gray()
+        plt.pcolormesh(wm.T, cmap=colormap)
+        plt.colorbar()
+        plt.xticks(np.arange(self.x))
+        plt.yticks(np.arange(self.y))
+        plt.title('Class %s' % t, fontweight='bold', fontsize=20)
+        ax.set_aspect('equal')
+        if filename:
+            plt.savefig(filename)
+            plt.close()
+            print("Done!")
+        else:
+            plt.show()
