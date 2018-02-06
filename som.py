@@ -115,6 +115,7 @@ class SOM(object):
 
         :return: normalized sum of distances for every neuron to its neighbors
         """
+        # TODO: make function working
         return None
 
     def winner_map(self, data):
@@ -212,7 +213,7 @@ class SOM(object):
             return fig, ax
 
     def plot_class_density(self, data, targets, t, colormap='Oranges', filename=None):
-        """ Plot a density map only for the given class name
+        """ Plot a density map only for the given class
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param targets: {list/array} array of target classes (0 to len(targetnames)) corresponding to data

@@ -21,7 +21,7 @@ d.calculate_crosscorr(7)
 
 som = SOM(20, 20)
 som.fit(d.descriptor, 4000)
-
+np.random.normal()
 dataset = load_AMPvsTM()
 d2 = PeptideDescriptor(dataset.sequences, 'pepcats')
 d2.calculate_crosscorr(7)
