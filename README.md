@@ -41,7 +41,7 @@ The `SOM` class has the following methods:
 - `transform`: transform given data in to the SOM space
 - `distance_map`: get a map of every neuron and its distances to all neighbors
 - `winner_map`: get the number of times, a certain neuron in the trained SOM is winner for the given data
-- `som_error`: calculates the overall error as the average difference between the winning neurons and the data points
+- `som_error`: calculates the overall error as the average difference between the winning neurons and the data
 - `plot_point_map`: visualize the som with all data as points around the neurons
 - `plot_density_map`: visualize the data density in different areas of the SOM.
 - `plot_class_density`: plot a density map only for the given class
