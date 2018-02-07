@@ -35,16 +35,16 @@ som.plot_class_density(data, targets, 0, filename='class_0.png')
 The same way you can handle your own data.
 
 The `SOM` class has the following methods:
-- `winner`: compute the winner neuron closest to a given data vector (Euclidean distance)
-- `cycle`: perform one iteration in adapting the SOM towards the chosen data point
-- `fit`: train the SOM on the given data for several iterations
-- `transform`: transform given data in to the SOM space
-- `distance_map`: get a map of every neuron and its distances to all neighbors
-- `winner_map`: get the number of times, a certain neuron in the trained SOM is winner for the given data
-- `som_error`: calculates the overall error as the average difference between the winning neurons and the data
-- `plot_point_map`: visualize the som with all data as points around the neurons
-- `plot_density_map`: visualize the data density in different areas of the SOM.
-- `plot_class_density`: plot a density map only for the given class
+- `winner(vector)`: compute the winner neuron closest to a given data in `vector` (Euclidean distance)
+- `cycle(vector)`: perform one iteration in adapting the SOM towards the chosen data point in `vector`
+- `fit(data, epochs, batch_size=1)`: train the SOM on the given `data` for several `epochs`
+- `transform(data)`: transform given `data` in to the SOM space
+- `distance_map()`: get a map of every neuron and its distances to all neighbors
+- `winner_map(data)`: get the number of times, a certain neuron in the trained SOM is winner for the given `data`
+- `som_error(data)`: calculates the overall error as the average difference between the winning neurons and the `data`
+- `plot_point_map(data, targets, targetnames, filename=None, colors=None, markers=None, density=True)`: visualize the som with all data as points around the neurons
+- `plot_density_map(data, filename=None, internal=False)`: visualize the data density in different areas of the SOM.
+- `plot_class_density(data, targets, t, colormap='Oranges', filename=None)`: plot a density map only for the given class
 
 
 ### References:
