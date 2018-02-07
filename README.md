@@ -35,7 +35,7 @@ som.plot_class_density(data, targets, 0, filename='class_0.png')
 The same way you can handle your own data.
 
 The `SOM` class has the following methods:
-- `winner(vector)`: compute the winner neuron closest to a given data in `vector` (Euclidean distance)
+- `winner(vector)`: compute the winner neuron closest to a given data point in `vector` (Euclidean distance)
 - `cycle(vector)`: perform one iteration in adapting the SOM towards the chosen data point in `vector`
 - `fit(data, epochs, batch_size=1)`: train the SOM on the given `data` for several `epochs`
 - `transform(data)`: transform given `data` in to the SOM space
