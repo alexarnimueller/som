@@ -115,8 +115,8 @@ class SOM(object):
 
         :return: normalized sum of distances for every neuron to its neighbors
         """
-        # TODO: make function working
-        return None
+        # TODO: complete function
+        raise NotImplementedError
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
