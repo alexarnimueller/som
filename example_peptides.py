@@ -21,7 +21,6 @@ d.calculate_crosscorr(7)
 
 som = SOM(20, 20)
 som.fit(d.descriptor, 4000)
-np.random.normal()
 dataset = load_AMPvsTM()
 d2 = PeptideDescriptor(dataset.sequences, 'pepcats')
 d2.calculate_crosscorr(7)
@@ -34,5 +33,5 @@ som.plot_density_map(np.vstack((d.descriptor, d2.descriptor)), filename="density
 
 colormaps = ['Oranges', 'Purples', 'Greens', 'Reds']
 for i, c in enumerate(set(targets)):
-    som.plot_class_density(np.vstack((d.descriptor, d2.descriptor)), targets, c, colormap=colormaps[i],
+    som.plot_class_density(np.vstack((d.descriptor, d2.descriptor)), targets, c, names, colormap=colormaps[i],
                            filename='class%i.png' % c)

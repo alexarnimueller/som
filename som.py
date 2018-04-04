@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mptchs
 from sklearn.decomposition import PCA
 
 
@@ -39,7 +40,7 @@ class SOM(object):
         self.epoch = 0
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
-        self.distmap = np.array([])
+        self.distmap = np.zeros((self.x, self.y))
         self.inizialized = False
 
     def winner(self, vector):
@@ -51,7 +52,7 @@ class SOM(object):
         delta = np.abs(self.map - vector)
         dists = np.sum(delta ** 2, axis=2)
         indx = np.argmin(dists)
-        return np.array([indx / self.shape[0], indx % self.shape[1]])
+        return np.array([indx / self.x, indx % self.y])
 
     def cycle(self, vector):
         """ Perform one iteration in adapting the SOM towards the chosen data point
@@ -68,13 +69,30 @@ class SOM(object):
         # update neuron weights
         self.map -= h * self.alpha * (self.map - vector)
 
-        print("Epoch %i;  Neuron [%i, %i];  \tSigma: %.4f;  alpha: %.4f" % 
+        print("Epoch %i;    Neuron [%i, %i];  \tSigma: %.4f;  alpha: %.4f" %
               (self.epoch, w[0], w[1], self.sigma, self.alpha))
-        
+
         # update alpha, sigma and epoch
         self.alpha = self.alpha * self.alpha_decay
         self.sigma *= self.sigma_decay
         self.epoch = self.epoch + 1
+
+    def initialize(self, data, how='pca'):
+        """ Initialize the SOM neurons
+
+        :param data: {numpy.ndarray} data to use for initialization
+        :param how: {str} how to initialize the map, available: 'pca' (via 4 first eigenvalues) or 'random'
+        :return: initialized map in self.map
+        """
+        self.map = np.zeros((self.x, self.y, len(data[0])))
+        if how == 'pca':
+            eivalues = PCA(4).fit_transform(data.T).T
+            for i in range(4):
+                self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
+        else:
+            raise NotImplementedError
+            # TODO: make random initialization
+        self.inizialized = True
 
     def fit(self, data, epochs, batch_size=1):
         """ Train the SOM on the given data for several iterations
@@ -84,11 +102,7 @@ class SOM(object):
         :param batch_size: {int} number of data points to consider per iteration
         """
         if not self.inizialized:
-            # initialize map
-            self.map = np.zeros((self.x, self.y, len(data[0])))
-            eivalues = PCA(4).fit_transform(data.T).T
-            for i in range(4):
-                self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
+            self.initialize(data)
 
         # get decays for given epochs
         self.alpha_decay = (self.alpha_final / self.alpha) ** (1.0 / epochs)
@@ -115,8 +129,12 @@ class SOM(object):
 
         :return: normalized sum of distances for every neuron to its neighbors
         """
-        # TODO: make function working
-        return None
+        # TODO: not working properly, check! (PBC Manhattan distance not good)
+        dists = np.zeros(self.x * self.y)
+        for node in range(self.x * self.y):
+            d = man_dist_pbc(self.indxmap, np.array([node / self.x, node % self.y]), self.shape)
+            dists[node] = np.mean(d)
+        self.distmap = dists.reshape(self.shape) / float(np.max(dists))
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
@@ -141,7 +159,7 @@ class SOM(object):
             [x, y] = self.winner(d)
             dist = self.map[x, y] - d
             e += np.sqrt(np.dot(dist, dist.T))
-        return e / len(data)
+        return e / float(len(data))
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, density=True):
         """ Visualize the som with all data as points around the neurons
@@ -157,17 +175,18 @@ class SOM(object):
         """
         print("\nPlotting...")
         if not markers:
-            markers = ['o', 'o', 'o', 'o', 'o']
+            markers = ['o'] * len(targetnames)
         if not colors:
-            colors = ['#ffa100', '#e900ff', '#00ffe1', '#ff0008', '#00ff19']
+            colors = ['#EDB233', '#90C3EC', '#C02942', '#79BD9A', '#774F38', 'gray', 'black']
         if density:
             fig, ax = self.plot_density_map(data, internal=True)
         else:
             fig, ax = plt.subplots(figsize=self.shape)
+
         for cnt, xx in enumerate(data):
             w = self.winner(xx)
-            ax.plot(w[0] + .5 + 0.15 * np.random.randn(1), w[1] + .5 + 0.15 * np.random.randn(1),
-                    markers[targets[cnt]], color=colors[targets[cnt]], markersize=4, label=targetnames[targets[cnt]])
+            ax.plot(w[0] + .5 + 0.1 * np.random.randn(1), w[1] + .5 + 0.1 * np.random.randn(1),
+                    markers[targets[cnt]], color=colors[targets[cnt]], markersize=10)
 
         ax.set_aspect('equal')
         ax.set_xlim([0, self.x])
@@ -175,8 +194,10 @@ class SOM(object):
         ax.set_xticks(np.arange(self.x))
         ax.set_yticks(np.arange(self.y))
         ax.grid(which='both')
-        legend = plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), ncol=len(targetnames), loc=3, mode="expand",
-                            borderaxespad=0.1)
+
+        patches = [mptchs.Patch(color=colors[i], label=targetnames[i]) for i in range(len(targetnames))]
+        legend = plt.legend(handles=patches, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(targetnames),
+                            mode="expand", borderaxespad=0.1)
         legend.get_frame().set_facecolor('#e5e5e5')
 
         if filename:
@@ -196,8 +217,7 @@ class SOM(object):
         """
         wm = self.winner_map(data)
         fig, ax = plt.subplots(figsize=self.shape)
-        plt.gray()
-        plt.pcolormesh(wm.T)
+        plt.pcolormesh(wm.T, cmap='Greys', edgecolors=None)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
@@ -212,12 +232,13 @@ class SOM(object):
         else:
             return fig, ax
 
-    def plot_class_density(self, data, targets, t, colormap='Oranges', filename=None):
+    def plot_class_density(self, data, targets, t, names, colormap='Oranges', filename=None):
         """ Plot a density map only for the given class
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param targets: {list/array} array of target classes (0 to len(targetnames)) corresponding to data
         :param t: {int} target class to plot the density map for
+        :param names: {list} list of target names corresponding to targets
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param filename: {str} optional, if given, the plot is saved to this location
         :return: plot shown or saved if a filename is given
@@ -225,12 +246,34 @@ class SOM(object):
         t_data = data[np.where(targets == t)[0]]
         wm = self.winner_map(t_data)
         fig, ax = plt.subplots(figsize=self.shape)
-        plt.gray()
-        plt.pcolormesh(wm.T, cmap=colormap)
+        plt.pcolormesh(wm.T, cmap=colormap, edgecolors=None)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
-        plt.title('Class %s' % t, fontweight='bold', fontsize=20)
+        plt.title(names[t], fontweight='bold', fontsize=28)
+        ax.set_aspect('equal')
+        if filename:
+            plt.savefig(filename)
+            plt.close()
+            print("Done!")
+        else:
+            plt.show()
+
+    def plot_distance_map(self, colormap='Oranges', filename=None):
+        """ Plot the distance map after training.
+
+        :param colormap: {str} colormap to use, select from matplolib sequential colormaps
+        :param filename: {str} optional, if given, the plot is saved to this location
+        :return: plot shown or saved if a filename is given
+        """
+        if np.mean(self.distmap) == 0.:
+            self.distance_map()
+        fig, ax = plt.subplots(figsize=self.shape)
+        plt.pcolormesh(self.distmap, cmap=colormap, edgecolors=None)
+        plt.colorbar()
+        plt.xticks(np.arange(self.x))
+        plt.yticks(np.arange(self.y))
+        plt.title("Distance Map", fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
         if filename:
             plt.savefig(filename)
