@@ -208,17 +208,18 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_density_map(self, data, filename=None, internal=False):
+    def plot_density_map(self, data, colormap='Oranges', filename=None, internal=False):
         """ Visualize the data density in different areas of the SOM.
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
+        :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param filename: {str} optional, if given, the plot is saved to this location
         :param internal: {bool} if True, the current plot will stay open to be used for other plot functions
         :return: plot shown or saved if a filename is given
         """
         wm = self.winner_map(data)
         fig, ax = plt.subplots(figsize=self.shape)
-        plt.pcolormesh(wm, cmap='Greys', edgecolors=None)
+        plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
