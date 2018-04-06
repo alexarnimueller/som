@@ -1,6 +1,8 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
+import cPickle as pickle
 from sklearn.decomposition import PCA
 
 
@@ -41,6 +43,7 @@ class SOM(object):
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
+        self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
 
     def winner(self, vector):
@@ -81,17 +84,15 @@ class SOM(object):
         """ Initialize the SOM neurons
 
         :param data: {numpy.ndarray} data to use for initialization
-        :param how: {str} how to initialize the map, available: 'pca' (via 4 first eigenvalues) or 'random'
+        :param how: {str} how to initialize the map, available: 'pca' (via 4 first eigenvalues) or 'random' (via random
+            values normally distributed like data)
         :return: initialized map in self.map
         """
-        self.map = np.zeros((self.x, self.y, len(data[0])))
+        self.map = np.random.normal(np.mean(data), np.std(data), size=(self.x, self.y, len(data[0])))
         if how == 'pca':
             eivalues = PCA(4).fit_transform(data.T).T
             for i in range(4):
                 self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
-        else:
-            raise NotImplementedError
-            # TODO: make random initialization
         self.inizialized = True
 
     def fit(self, data, epochs, batch_size=1):
@@ -203,7 +204,7 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Done!")
+            print("Plot done!")
         else:
             plt.show()
 
@@ -217,7 +218,7 @@ class SOM(object):
         """
         wm = self.winner_map(data)
         fig, ax = plt.subplots(figsize=self.shape)
-        plt.pcolormesh(wm.T, cmap='Greys', edgecolors=None)
+        plt.pcolormesh(wm, cmap='Greys', edgecolors=None)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
@@ -226,13 +227,13 @@ class SOM(object):
             if filename:
                 plt.savefig(filename)
                 plt.close()
-                print("Done!")
+                print("Plot done!")
             else:
                 plt.show()
         else:
             return fig, ax
 
-    def plot_class_density(self, data, targets, t, names, colormap='Oranges', filename=None):
+    def plot_class_density(self, data, targets, t, names, colormap='Oranges', mol_dict=None, filename=None):
         """ Plot a density map only for the given class
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
@@ -240,22 +241,34 @@ class SOM(object):
         :param t: {int} target class to plot the density map for
         :param names: {list} list of target names corresponding to targets
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
+        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
+            values. These molecules will be mapped onto the density map and marked
         :param filename: {str} optional, if given, the plot is saved to this location
         :return: plot shown or saved if a filename is given
         """
         t_data = data[np.where(targets == t)[0]]
         wm = self.winner_map(t_data)
         fig, ax = plt.subplots(figsize=self.shape)
-        plt.pcolormesh(wm.T, cmap=colormap, edgecolors=None)
+        plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
         plt.title(names[t], fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
+        plt.text(0.1, -1., "%i Datapoints" % len(t_data), fontsize=20, fontweight='bold')
+
+        if mol_dict:
+            for k, v in mol_dict.items():
+                w = self.winner(v)
+                x = w[1] + 0.5 + np.random.normal(0, 0.1)
+                y = w[0] + 0.5 + np.random.normal(0, 0.1)
+                plt.plot(x, y, marker='*', color='#FDBC1C', markersize=20)
+                plt.annotate(k, xy=(x+0.75, y-0.2), textcoords='data', fontsize=18)
+
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Done!")
+            print("Plot done!")
         else:
             plt.show()
 
@@ -278,6 +291,27 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Done!")
+            print("Plot done!")
         else:
             plt.show()
+
+    def save(self, filename):
+        """ Save the SOM instance to a pickle file.
+
+        :param filename: {str} filename (best to end with .p)
+        :return: saved instance in file with name ``filename``
+        """
+        f = open(filename, 'wb')
+        pickle.dump(self.__dict__, f, 2)
+        f.close()
+
+    def load(self, filename):
+        """ Save the SOM instance to a pickle file.
+
+        :param filename: {str} filename (best to end with .p)
+        :return: saved instance in file with name ``filename``
+        """
+        f = open(filename, 'rb')
+        tmp_dict = pickle.load(f)
+        f.close()
+        self.__dict__.update(tmp_dict)
