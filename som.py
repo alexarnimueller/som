@@ -46,6 +46,7 @@ class SOM(object):
         self.distmap = np.zeros((self.x, self.y))
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
+        self.error = 0.  # reconstruction error
 
     def winner(self, vector):
         """ Compute the winner neuron closest to the vector (Euclidean distance)
@@ -114,6 +115,7 @@ class SOM(object):
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
+        self.error = self.som_error(data)
 
     def transform(self, data):
         """ Transform data in to the SOM space
@@ -127,7 +129,7 @@ class SOM(object):
 
     def distance_map(self, metric='euclidean'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
-        the neuron and all others.
+        the neuron and all other neurons.
 
         :param metric: {str} distance metric to be used (see ``scipy.spatial.distance.cdist``)
         :return: normalized sum of distances for every neuron to its neighbors
