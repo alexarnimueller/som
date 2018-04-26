@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
 import cPickle as pickle
-from scipy.spatial.distance import pdist
+from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
 
 
@@ -132,13 +132,12 @@ class SOM(object):
         :param metric: {str} distance metric to be used (see ``scipy.spatial.distance.cdist``)
         :return: normalized sum of distances for every neuron to its neighbors
         """
-        # TODO: make working
-        dists = np.zeros(self.x * self.y)
+        dists = np.zeros((self.x, self.y))
         for x in range(self.x):
             for y in range(self.y):
-                d = cdist(self.map[x, y].reshape((1, -1)), self.map, metric=metric)
-                dists[node] = np.mean(d)
-        self.distmap = dists.reshape(self.shape) / float(np.max(dists))
+                d = cdist(self.map[x, y].reshape((1, -1)), self.map.reshape((-1, self.map.shape[-1])), metric=metric)
+                dists[x, y] = np.mean(d)
+        self.distmap = dists / float(np.max(dists))
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
