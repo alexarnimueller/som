@@ -47,6 +47,7 @@ class SOM(object):
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
+        self.history = list()  # reconstruction error training history
 
     def winner(self, vector):
         """ Compute the winner neuron closest to the vector (Euclidean distance)
@@ -115,6 +116,8 @@ class SOM(object):
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
+            if i % 1000 == 0:  # save the error to history every 1000 epochs
+                self.history.append(self.som_error(data))
         self.error = self.som_error(data)
 
     def transform(self, data):
@@ -293,6 +296,27 @@ class SOM(object):
         plt.yticks(np.arange(self.y))
         plt.title("Distance Map", fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
+        if filename:
+            plt.savefig(filename)
+            plt.close()
+            print("Plot done!")
+        else:
+            plt.show()
+
+    def plot_error_history(self, color='orange', filename=None):
+        """ plot the training reconstruction error history that was recorded during the fit
+
+        :param color: {str} color of the line
+        :param filename: {str} optional, if given, the plot is saved to this location
+        :return: plot shown or saved if a filename is given
+        """
+        if not len(self.history):
+            raise LookupError("No error history was found! Is the SOM already trained?")
+        fig, ax = plt.subplots()
+        ax.plot(range(0, self.epoch, 1000), self.history, '-o', c=color)
+        ax.set_title('SOM Error History', fontweight='bold')
+        ax.set_xlabel('Epoch', fontweight='bold')
+        ax.set_ylabel('Error', fontweight='bold')
         if filename:
             plt.savefig(filename)
             plt.close()
