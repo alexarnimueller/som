@@ -130,7 +130,7 @@ class SOM(object):
         dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
         return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
-    def distance_map(self, metric='euclidean'):
+    def distance_map(self, metric='cosine'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
         the neuron and all other neurons.
 
@@ -168,6 +168,26 @@ class SOM(object):
             dist = self.map[x, y] - d
             e += np.sqrt(np.dot(dist, dist.T))
         return e / float(len(data))
+
+    def get_neighbors(self, datapoint, data, labels, d=1):
+        """ return the neighboring data instances and their labels for a given datap oint of interest
+
+        :param datapoint: {numpy.ndarray} descriptor vector of the data point of interest to check for neighbors
+        :param data: {numpy.ndarray} reference data to compare ``datapoint`` to
+        :param labels: {numpy.ndarray} array of labels describing the target classes for every data point in ``data``
+        :param d: {int} length of Manhattan distance to explore the neighborhood (0: only same neuron as data point)
+        :return: {numpy.ndarray} found neighbors (labels)
+        """
+        w = np.array(self.winner(datapoint)).reshape((1, 2))
+        rslt = np.zeros((len(labels), 2))
+        for cnt, xx in enumerate(data):
+            [x, y] = self.winner(xx)
+            rslt[cnt, 1] = x
+            rslt[cnt, 2] = y
+        dists = cdist(w, rslt, 'cityblock')
+        matches = np.where(dists <= d)[0]
+        return labels[matches]
+    # TODO: test method!
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, density=True):
         """ Visualize the som with all data as points around the neurons
