@@ -179,12 +179,13 @@ class SOM(object):
         :return: {numpy.ndarray} found neighbors (labels)
         """
         w = np.array(self.winner(datapoint)).reshape((1, 2))
+        print("Winner neuron of data point: [%i, %i]" % (w[0, 0], w[0, 1]))
         rslt = np.zeros((len(labels), 2))
         for cnt, xx in enumerate(data):
             [x, y] = self.winner(xx)
-            rslt[cnt, 1] = x
-            rslt[cnt, 2] = y
-        dists = cdist(w, rslt, 'cityblock')
+            rslt[cnt, 0] = x
+            rslt[cnt, 1] = y
+        dists = cdist(w, rslt, 'cityblock').flatten()
         matches = np.where(dists <= d)[0]
         return labels[matches]
     # TODO: test method!
