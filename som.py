@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
 import cPickle as pickle
+from scipy.spatial.distance import pdist
 from sklearn.decomposition import PCA
 
 
@@ -72,7 +73,7 @@ class SOM(object):
         # update neuron weights
         self.map -= h * self.alpha * (self.map - vector)
 
-        print("Epoch %i;    Neuron [%i, %i];  \tSigma: %.4f;  alpha: %.4f" %
+        print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
               (self.epoch, w[0], w[1], self.sigma, self.alpha))
 
         # update alpha, sigma and epoch
@@ -124,17 +125,19 @@ class SOM(object):
         dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
         return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
-    def distance_map(self):
+    def distance_map(self, metric='euclidean'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
-        the neuron and its neighbors.
+        the neuron and all others.
 
+        :param metric: {str} distance metric to be used (see ``scipy.spatial.distance.cdist``)
         :return: normalized sum of distances for every neuron to its neighbors
         """
-        # TODO: not working properly, check! (PBC Manhattan distance not good)
+        # TODO: make working
         dists = np.zeros(self.x * self.y)
-        for node in range(self.x * self.y):
-            d = man_dist_pbc(self.indxmap, np.array([node / self.x, node % self.y]), self.shape)
-            dists[node] = np.mean(d)
+        for x in range(self.x):
+            for y in range(self.y):
+                d = cdist(self.map[x, y].reshape((1, -1)), self.map, metric=metric)
+                dists[node] = np.mean(d)
         self.distmap = dists.reshape(self.shape) / float(np.max(dists))
 
     def winner_map(self, data):
@@ -261,10 +264,10 @@ class SOM(object):
         if mol_dict:
             for k, v in mol_dict.items():
                 w = self.winner(v)
-                x = w[1] + 0.5 + np.random.normal(0, 0.1)
-                y = w[0] + 0.5 + np.random.normal(0, 0.1)
-                plt.plot(x, y, marker='*', color='#FDBC1C', markersize=20)
-                plt.annotate(k, xy=(x+0.75, y-0.2), textcoords='data', fontsize=18)
+                x = w[1] + 0.5 + np.random.normal(0, 0.15)
+                y = w[0] + 0.5 + np.random.normal(0, 0.15)
+                plt.plot(x, y, marker='*', color='#FDBC1C', markersize=24)
+                plt.annotate(k, xy=(x+0.5, y-0.18), textcoords='data', fontsize=18, fontweight='bold')
 
         if filename:
             plt.savefig(filename)
