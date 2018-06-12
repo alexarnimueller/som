@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
@@ -41,6 +40,7 @@ class SOM(object):
         self.alpha_decay = float()
         self.sigma_decay = float()
         self.epoch = 0
+        self.interval = int()
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
@@ -98,12 +98,13 @@ class SOM(object):
                 self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
         self.inizialized = True
 
-    def fit(self, data, epochs, batch_size=1):
+    def fit(self, data, epochs, batch_size=1, interval=1000):
         """ Train the SOM on the given data for several iterations
 
         :param data: {numpy.ndarray} data to train on
         :param epochs: {int} number of iterations to train
         :param batch_size: {int} number of data points to consider per iteration
+        :param interval: {int} interval of epochs to use for saving training errors
         """
         if not self.inizialized:
             self.initialize(data)
@@ -112,11 +113,12 @@ class SOM(object):
         self.alpha_decay = (self.alpha_final / self.alpha) ** (1.0 / epochs)
         self.sigma_decay = (np.sqrt(self.x) / (4. * self.sigma)) ** (1.0 / epochs)
 
+        self.interval = interval
         samples = np.arange(len(data))
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
-            if i % 1000 == 0:  # save the error to history every 1000 epochs
+            if i % interval == 0:  # save the error to history every "interval" epochs
                 self.history.append(self.som_error(data))
         self.error = self.som_error(data)
 
@@ -188,9 +190,11 @@ class SOM(object):
         dists = cdist(w, rslt, 'cityblock').flatten()
         matches = np.where(dists <= d)[0]
         return labels[matches]
+
     # TODO: test method!
 
-    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, density=True):
+    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, mol_dict=None,
+                       density=True):
         """ Visualize the som with all data as points around the neurons
 
         :param data: {numpy.ndarray} data to visualize with the SOM
@@ -199,6 +203,7 @@ class SOM(object):
         :param filename: {str} optional, if given, the plot is saved to this location
         :param colors: {list/array} optional, if given, different classes are colored in these colors
         :param markers: {list/array} optional, if given, different classes are visualized with these markers
+        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
         :param density: {bool} whether to plot the density map with winner neuron counts in the background
         :return: plot shown or saved if a filename is given
         """
@@ -229,6 +234,14 @@ class SOM(object):
                             mode="expand", borderaxespad=0.1)
         legend.get_frame().set_facecolor('#e5e5e5')
 
+        if mol_dict:
+            for k, v in mol_dict.items():
+                w = self.winner(v)
+                x = w[1] + 0.5 + np.random.normal(0, 0.15)
+                y = w[0] + 0.5 + np.random.normal(0, 0.15)
+                plt.plot(x, y, marker='*', color='#FDBC1C', markersize=24)
+                plt.annotate(k, xy=(x + 0.5, y - 0.18), textcoords='data', fontsize=18, fontweight='bold')
+
         if filename:
             plt.savefig(filename)
             plt.close()
@@ -236,12 +249,13 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_density_map(self, data, colormap='Oranges', filename=None, internal=False):
+    def plot_density_map(self, data, colormap='Oranges', filename=None, mol_dict=None, internal=False):
         """ Visualize the data density in different areas of the SOM.
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param filename: {str} optional, if given, the plot is saved to this location
+        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
         :param internal: {bool} if True, the current plot will stay open to be used for other plot functions
         :return: plot shown or saved if a filename is given
         """
@@ -252,6 +266,15 @@ class SOM(object):
         plt.xticks(np.arange(self.x))
         plt.yticks(np.arange(self.y))
         ax.set_aspect('equal')
+
+        if mol_dict:
+            for k, v in mol_dict.items():
+                w = self.winner(v)
+                x = w[1] + 0.5 + np.random.normal(0, 0.15)
+                y = w[0] + 0.5 + np.random.normal(0, 0.15)
+                plt.plot(x, y, marker='*', color='#FDBC1C', markersize=24)
+                plt.annotate(k, xy=(x + 0.5, y - 0.18), textcoords='data', fontsize=18, fontweight='bold')
+
         if not internal:
             if filename:
                 plt.savefig(filename)
@@ -292,7 +315,7 @@ class SOM(object):
                 x = w[1] + 0.5 + np.random.normal(0, 0.15)
                 y = w[0] + 0.5 + np.random.normal(0, 0.15)
                 plt.plot(x, y, marker='*', color='#FDBC1C', markersize=24)
-                plt.annotate(k, xy=(x+0.5, y-0.18), textcoords='data', fontsize=18, fontweight='bold')
+                plt.annotate(k, xy=(x + 0.5, y - 0.18), textcoords='data', fontsize=18, fontweight='bold')
 
         if filename:
             plt.savefig(filename)
@@ -334,7 +357,7 @@ class SOM(object):
         if not len(self.history):
             raise LookupError("No error history was found! Is the SOM already trained?")
         fig, ax = plt.subplots()
-        ax.plot(range(0, self.epoch, 1000), self.history, '-o', c=color)
+        ax.plot(range(0, self.epoch, self.interval), self.history, '-o', c=color)
         ax.set_title('SOM Error History', fontweight='bold')
         ax.set_xlabel('Epoch', fontweight='bold')
         ax.set_ylabel('Error', fontweight='bold')
