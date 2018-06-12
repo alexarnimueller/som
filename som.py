@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
 import cPickle as pickle
-from scipy.spatial.distance import pdist
+from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
 
 
@@ -46,6 +46,8 @@ class SOM(object):
         self.distmap = np.zeros((self.x, self.y))
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
+        self.error = 0.  # reconstruction error
+        self.history = list()  # reconstruction error training history
 
     def winner(self, vector):
         """ Compute the winner neuron closest to the vector (Euclidean distance)
@@ -114,6 +116,9 @@ class SOM(object):
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
+            if i % 1000 == 0:  # save the error to history every 1000 epochs
+                self.history.append(self.som_error(data))
+        self.error = self.som_error(data)
 
     def transform(self, data):
         """ Transform data in to the SOM space
@@ -125,20 +130,19 @@ class SOM(object):
         dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
         return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
-    def distance_map(self, metric='euclidean'):
+    def distance_map(self, metric='cosine'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
-        the neuron and all others.
+        the neuron and all other neurons.
 
         :param metric: {str} distance metric to be used (see ``scipy.spatial.distance.cdist``)
         :return: normalized sum of distances for every neuron to its neighbors
         """
-        # TODO: make working
-        dists = np.zeros(self.x * self.y)
+        dists = np.zeros((self.x, self.y))
         for x in range(self.x):
             for y in range(self.y):
-                d = cdist(self.map[x, y].reshape((1, -1)), self.map, metric=metric)
-                dists[node] = np.mean(d)
-        self.distmap = dists.reshape(self.shape) / float(np.max(dists))
+                d = cdist(self.map[x, y].reshape((1, -1)), self.map.reshape((-1, self.map.shape[-1])), metric=metric)
+                dists[x, y] = np.mean(d)
+        self.distmap = dists / float(np.max(dists))
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
@@ -164,6 +168,27 @@ class SOM(object):
             dist = self.map[x, y] - d
             e += np.sqrt(np.dot(dist, dist.T))
         return e / float(len(data))
+
+    def get_neighbors(self, datapoint, data, labels, d=1):
+        """ return the neighboring data instances and their labels for a given datap oint of interest
+
+        :param datapoint: {numpy.ndarray} descriptor vector of the data point of interest to check for neighbors
+        :param data: {numpy.ndarray} reference data to compare ``datapoint`` to
+        :param labels: {numpy.ndarray} array of labels describing the target classes for every data point in ``data``
+        :param d: {int} length of Manhattan distance to explore the neighborhood (0: only same neuron as data point)
+        :return: {numpy.ndarray} found neighbors (labels)
+        """
+        w = np.array(self.winner(datapoint)).reshape((1, 2))
+        print("Winner neuron of data point: [%i, %i]" % (w[0, 0], w[0, 1]))
+        rslt = np.zeros((len(labels), 2))
+        for cnt, xx in enumerate(data):
+            [x, y] = self.winner(xx)
+            rslt[cnt, 0] = x
+            rslt[cnt, 1] = y
+        dists = cdist(w, rslt, 'cityblock').flatten()
+        matches = np.where(dists <= d)[0]
+        return labels[matches]
+    # TODO: test method!
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, density=True):
         """ Visualize the som with all data as points around the neurons
@@ -292,6 +317,27 @@ class SOM(object):
         plt.yticks(np.arange(self.y))
         plt.title("Distance Map", fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
+        if filename:
+            plt.savefig(filename)
+            plt.close()
+            print("Plot done!")
+        else:
+            plt.show()
+
+    def plot_error_history(self, color='orange', filename=None):
+        """ plot the training reconstruction error history that was recorded during the fit
+
+        :param color: {str} color of the line
+        :param filename: {str} optional, if given, the plot is saved to this location
+        :return: plot shown or saved if a filename is given
+        """
+        if not len(self.history):
+            raise LookupError("No error history was found! Is the SOM already trained?")
+        fig, ax = plt.subplots()
+        ax.plot(range(0, self.epoch, 1000), self.history, '-o', c=color)
+        ax.set_title('SOM Error History', fontweight='bold')
+        ax.set_xlabel('Epoch', fontweight='bold')
+        ax.set_ylabel('Error', fontweight='bold')
         if filename:
             plt.savefig(filename)
             plt.close()
