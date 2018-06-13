@@ -194,7 +194,7 @@ class SOM(object):
     # TODO: test method!
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, mol_dict=None,
-                       density=True):
+                       density=True, activities=None):
         """ Visualize the som with all data as points around the neurons
 
         :param data: {numpy.ndarray} data to visualize with the SOM
@@ -205,22 +205,30 @@ class SOM(object):
         :param markers: {list/array} optional, if given, different classes are visualized with these markers
         :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
         :param density: {bool} whether to plot the density map with winner neuron counts in the background
+        :param activities: {list/array} list of activities (e.g. IC50 values) to use for coloring the points
+            accordingly; high values will appear in blue, low values in green
         :return: plot shown or saved if a filename is given
         """
-        print("\nPlotting...")
         if not markers:
             markers = ['o'] * len(targetnames)
         if not colors:
             colors = ['#EDB233', '#90C3EC', '#C02942', '#79BD9A', '#774F38', 'gray', 'black']
+        if activities:
+            heatmap = plt.get_cmap('coolwarm').reversed()
+            colors = [heatmap(a / max(activities)) for a in activities]
         if density:
             fig, ax = self.plot_density_map(data, internal=True)
         else:
             fig, ax = plt.subplots(figsize=self.shape)
 
         for cnt, xx in enumerate(data):
+            if activities:
+                c = colors[cnt]
+            else:
+                c = colors[targets[cnt]]
             w = self.winner(xx)
-            ax.plot(w[0] + .5 + 0.1 * np.random.randn(1), w[1] + .5 + 0.1 * np.random.randn(1),
-                    markers[targets[cnt]], color=colors[targets[cnt]], markersize=10)
+            ax.plot(w[1] + .5 + 0.1 * np.random.randn(1), w[0] + .5 + 0.1 * np.random.randn(1),
+                    markers[targets[cnt]], color=c, markersize=12)
 
         ax.set_aspect('equal')
         ax.set_xlim([0, self.x])
@@ -229,10 +237,11 @@ class SOM(object):
         ax.set_yticks(np.arange(self.y))
         ax.grid(which='both')
 
-        patches = [mptchs.Patch(color=colors[i], label=targetnames[i]) for i in range(len(targetnames))]
-        legend = plt.legend(handles=patches, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(targetnames),
-                            mode="expand", borderaxespad=0.1)
-        legend.get_frame().set_facecolor('#e5e5e5')
+        if not activities:
+            patches = [mptchs.Patch(color=colors[i], label=targetnames[i]) for i in range(len(targetnames))]
+            legend = plt.legend(handles=patches, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(targetnames),
+                                mode="expand", borderaxespad=0.1)
+            legend.get_frame().set_facecolor('#e5e5e5')
 
         if mol_dict:
             for k, v in mol_dict.items():
@@ -245,7 +254,7 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Plot done!")
+            print("Point map plot done!")
         else:
             plt.show()
 
@@ -279,7 +288,7 @@ class SOM(object):
             if filename:
                 plt.savefig(filename)
                 plt.close()
-                print("Plot done!")
+                print("Density map plot done!")
             else:
                 plt.show()
         else:
@@ -320,7 +329,7 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Plot done!")
+            print("Class density plot done!")
         else:
             plt.show()
 
@@ -343,7 +352,7 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Plot done!")
+            print("Distance map plot done!")
         else:
             plt.show()
 
@@ -364,7 +373,7 @@ class SOM(object):
         if filename:
             plt.savefig(filename)
             plt.close()
-            print("Plot done!")
+            print("Error history plot done!")
         else:
             plt.show()
 
