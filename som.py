@@ -21,13 +21,12 @@ def man_dist_pbc(m, vector, shape=(10, 10)):
 
 
 class SOM(object):
-    def __init__(self, x, y, alpha=0.6, alpha_final=0.1, seed=42):
+    def __init__(self, x, y, alpha_start=0.6, seed=42):
         """ Initialize the SOM object with a given map size
         
         :param x: {int} width of the map
         :param y: {int} height of the map
-        :param alpha: {float} initial alpha at training start
-        :param alpha_final: {float} final alpha to reach at last training epoch
+        :param alpha_start: {float} initial alpha at training start
         :param seed: {int} random seed to use
         """
         np.random.seed(seed)
@@ -35,10 +34,9 @@ class SOM(object):
         self.y = y
         self.shape = (x, y)
         self.sigma = x / 2.
-        self.alpha = alpha
-        self.alpha_final = alpha_final
-        self.alpha_decay = float()
-        self.sigma_decay = float()
+        self.alpha_start = alpha_start
+        self.alphas = None
+        self.sigmas = None
         self.epoch = 0
         self.interval = int()
         self.map = np.array([])
@@ -70,17 +68,17 @@ class SOM(object):
         dists = man_dist_pbc(self.indxmap, w, self.shape)
 
         # smooth the distances with the current sigma
-        h = np.exp(-(dists / self.sigma) ** 2).reshape(self.x, self.y, 1)
+        h = np.exp(-(dists / self.sigmas[self.epoch]) ** 2).reshape(self.x, self.y, 1)
 
         # update neuron weights
-        self.map -= h * self.alpha * (self.map - vector)
+        self.map -= h * self.alphas[self.epoch] * (self.map - vector)
 
         print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
-              (self.epoch, w[0], w[1], self.sigma, self.alpha))
+              (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
 
         # update alpha, sigma and epoch
-        self.alpha = self.alpha * self.alpha_decay
-        self.sigma *= self.sigma_decay
+        # self.alpha_start = self.alpha_start * self.alpha_decay
+        # self.sigma *= self.sigma_decay
         self.epoch = self.epoch + 1
 
     def initialize(self, data, how='pca'):
@@ -98,20 +96,29 @@ class SOM(object):
                 self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
         self.inizialized = True
 
-    def fit(self, data, epochs, batch_size=1, interval=1000):
+    def fit(self, data, epochs, batch_size=1, interval=1000, decay='hill'):
         """ Train the SOM on the given data for several iterations
 
         :param data: {numpy.ndarray} data to train on
         :param epochs: {int} number of iterations to train
         :param batch_size: {int} number of data points to consider per iteration
         :param interval: {int} interval of epochs to use for saving training errors
+        :param decay: {str} type of decay for alpha and sigma. Choose from 'hill' (Hill function) and 'linear', with
+            'hill' having the form ``y = 1 / (1 + (x / 0.5) **4)``
         """
         if not self.inizialized:
             self.initialize(data)
 
-        # get decays for given epochs
-        self.alpha_decay = (self.alpha_final / self.alpha) ** (1.0 / epochs)
-        self.sigma_decay = (np.sqrt(self.x) / (4. * self.sigma)) ** (1.0 / epochs)
+        # get alpha and sigma decays for given number of epochs
+        # self.alpha_decay = (self.alpha_final / self.alpha) ** (1.0 / epochs)
+        # self.sigma_decay = (np.sqrt(self.x) / (4. * self.sigma)) ** (1.0 / epochs)
+        if decay == 'hill':
+            epoch_list = np.linspace(0, 1, epochs)
+            self.alphas = self.alpha_start / (1 + (epoch_list / 0.5) ** 4)
+            self.sigmas = self.sigma / (1 + (epoch_list / 0.5) ** 4)
+        else:
+            self.alphas = np.linspace(self.alpha_start, 0.05, epochs)
+            self.sigmas = np.linspace(self.sigma, 1, epochs)
 
         self.interval = interval
         samples = np.arange(len(data))
@@ -132,7 +139,7 @@ class SOM(object):
         dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
         return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
-    def distance_map(self, metric='cosine'):
+    def distance_map(self, metric='euclidean'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
         the neuron and all other neurons.
 

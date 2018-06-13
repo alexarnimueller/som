@@ -21,8 +21,8 @@ d = PeptideDescriptor(seqs=np.hstack((h.sequences, r.sequences, n.sequences)), s
 d.calculate_crosscorr(window=7)
 
 # train a som on the descriptors and print / plot the training error
-som = SOM(x=10, y=10)
-som.fit(data=d.descriptor, epochs=10000)
+som = SOM(x=12, y=12)
+som.fit(data=d.descriptor, epochs=100000, decay='hill')
 print("Fit error: %.4f" % som.error)
 som.plot_error_history(filename="som_error.png")
 
@@ -36,6 +36,7 @@ names = ['Helices', 'Random', 'nGrams', 'AMP']
 # plot som maps with location of AMPs
 som.plot_point_map(np.vstack((d.descriptor, d2.descriptor[206:])), targets, names, filename="peptidesom.png")
 som.plot_density_map(np.vstack((d.descriptor, d2.descriptor)), filename="density.png")
+som.plot_distance_map(colormap='Reds', filename="distances.png")
 
 colormaps = ['Oranges', 'Purples', 'Greens', 'Reds']
 for i, c in enumerate(set(targets)):
