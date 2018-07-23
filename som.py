@@ -4,6 +4,7 @@ import matplotlib.patches as mptchs
 import cPickle as pickle
 from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
+from multiprocessing import cpu_count, Process, Queue
 
 
 def man_dist_pbc(m, vector, shape=(10, 10)):
@@ -164,18 +165,34 @@ class SOM(object):
             wm[x, y] += 1
         return wm
 
+    def _one_error(self, data, q):
+        """Private function to be used for parallel error calculation
+
+        :param data: {numpy.ndarray} data matrix to calculate SOM error for
+        :param q: {multiprocessing.Queue} queue
+        :return: {list} list of SOM errors
+        """
+        errs = list()
+        for d in data:
+            [x, y] = self.winner(d)
+            dist = self.map[x, y] - d
+            errs.append(np.sqrt(np.dot(dist, dist.T)))
+        q.put(errs)
+
     def som_error(self, data):
         """ Calculates the overall error as the average difference between the winning neurons and the data points
 
         :param data: {numpy.ndarray}
         :return: normalized error
         """
-        e = float()
-        for d in data:
-            [x, y] = self.winner(d)
-            dist = self.map[x, y] - d
-            e += np.sqrt(np.dot(dist, dist.T))
-        return e / float(len(data))
+        queue = Queue()
+        for d in np.array_split(np.array(data), cpu_count()):
+            p = Process(target=self._one_error, args=(d, queue,))
+            p.start()
+        rslt = []
+        for _ in range(cpu_count()):
+            rslt.extend(queue.get(10))
+        return sum(rslt) / float(len(data))
 
     def get_neighbors(self, datapoint, data, labels, d=0):
         """ return the neighboring data instances and their labels for a given data point of interest
