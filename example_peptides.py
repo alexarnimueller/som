@@ -46,4 +46,4 @@ for i, c in enumerate(set(targets)):
 # get neighboring peptides (AMPs / TMs) for a sequence of interest
 my_d = PeptideDescriptor(seqs='GLFDIVKKVVGALLAG', scalename='pepcats')
 my_d.calculate_crosscorr(window=7)
-som.get_neighbors(datapoint=my_d.descriptor, data=d2.descriptor, labels=dataset.sequences, d=1)
+som.get_neighbors(datapoint=my_d.descriptor, data=d2.descriptor, labels=dataset.sequences, d=0)

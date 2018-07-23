@@ -178,8 +178,8 @@ class SOM(object):
             e += np.sqrt(np.dot(dist, dist.T))
         return e / float(len(data))
 
-    def get_neighbors(self, datapoint, data, labels, d=1):
-        """ return the neighboring data instances and their labels for a given datap oint of interest
+    def get_neighbors(self, datapoint, data, labels, d=0):
+        """ return the neighboring data instances and their labels for a given data point of interest
 
         :param datapoint: {numpy.ndarray} descriptor vector of the data point of interest to check for neighbors
         :param data: {numpy.ndarray} reference data to compare ``datapoint`` to
@@ -197,8 +197,6 @@ class SOM(object):
         dists = cdist(w, rslt, 'cityblock').flatten()
         matches = np.where(dists <= d)[0]
         return labels[matches]
-
-    # TODO: test method!
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, mol_dict=None,
                        density=True, activities=None):
