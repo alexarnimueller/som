@@ -108,10 +108,9 @@ class SOM(object):
         """
         if not self.inizialized:
             self.initialize(data)
+        self.interval = interval
 
-        # get alpha and sigma decays for given number of epochs
-        # self.alpha_decay = (self.alpha_final / self.alpha) ** (1.0 / epochs)
-        # self.sigma_decay = (np.sqrt(self.x) / (4. * self.sigma)) ** (1.0 / epochs)
+        # get alpha and sigma decays for given number of epochs or for hill decay
         if decay == 'hill':
             epoch_list = np.linspace(0, 1, epochs)
             self.alphas = self.alpha_start / (1 + (epoch_list / 0.5) ** 4)
@@ -120,12 +119,12 @@ class SOM(object):
             self.alphas = np.linspace(self.alpha_start, 0.05, epochs)
             self.sigmas = np.linspace(self.sigma, 1, epochs)
 
-        self.interval = interval
         samples = np.arange(len(data))
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
-            if i % interval == 0:  # save the error to history every "interval" epochs
+            # save the error to history every "interval" epochs
+            if i % interval == 0:
                 self.history.append(self.som_error(data))
         self.error = self.som_error(data)
 
