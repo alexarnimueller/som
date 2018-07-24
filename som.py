@@ -43,6 +43,7 @@ class SOM(object):
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
+        self.winner_indices = None
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
@@ -77,9 +78,6 @@ class SOM(object):
         print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
               (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
 
-        # update alpha, sigma and epoch
-        # self.alpha_start = self.alpha_start * self.alpha_decay
-        # self.sigma *= self.sigma_decay
         self.epoch = self.epoch + 1
 
     def initialize(self, data, how='pca'):
@@ -95,14 +93,16 @@ class SOM(object):
             eivalues = PCA(4).fit_transform(data.T).T
             for i in range(4):
                 self.map[np.random.randint(0, self.x), np.random.randint(0, self.y)] = eivalues[i]
+
         self.inizialized = True
 
-    def fit(self, data, epochs, batch_size=1, interval=1000, decay='hill'):
+    def fit(self, data, epochs, batch_size=1, save_e=True, interval=1000, decay='hill'):
         """ Train the SOM on the given data for several iterations
 
         :param data: {numpy.ndarray} data to train on
         :param epochs: {int} number of iterations to train
         :param batch_size: {int} number of data points to consider per iteration
+        i:param save_e: {bool} whether to save the error history
         :param interval: {int} interval of epochs to use for saving training errors
         :param decay: {str} type of decay for alpha and sigma. Choose from 'hill' (Hill function) and 'linear', with
             'hill' having the form ``y = 1 / (1 + (x / 0.5) **4)``
@@ -124,9 +124,9 @@ class SOM(object):
         for i in range(epochs):
             indx = np.random.choice(samples, batch_size)
             self.cycle(data[indx])
-            # save the error to history every "interval" epochs
-            if i % interval == 0:
-                self.history.append(self.som_error(data))
+            if save_e:  # save the error to history every "interval" epochs
+                if i % interval == 0:
+                    self.history.append(self.som_error(data))
         self.error = self.som_error(data)
 
     def transform(self, data):
@@ -164,6 +164,30 @@ class SOM(object):
             [x, y] = self.winner(d)
             wm[x, y] += 1
         return wm
+
+    def _one_winner_neuron(self, data, q):
+        """Private function to be used for parallel winner neuron computation
+
+        :param data: {numpy.ndarray} data matrix to compute the winner neurons on
+        :param q: {multiprocessing.Queue} queue
+        :return: {list} winner neuron cooridnates for every datapoint
+        """
+        q.put(np.array([list(self.winner(d)) for d in data], dtype='int'))
+
+    def winner_neurons(self, data):
+        """ For every datapoint, get the winner neuron coordinates.
+
+        :param data: {numpy.ndarray} data to compute the winner neurons on
+        :return: {numpy.ndarray} winner neuron coordinates for every datapoint
+        """
+        queue = Queue()
+        for d in np.array_split(np.array(data), cpu_count()):
+            p = Process(target=self._one_winner_neuron, args=(d, queue,))
+            p.start()
+        rslt = []
+        for _ in range(cpu_count()):
+            rslt.extend(queue.get(10))
+        self.winner_indices = np.array(rslt, dtype='int').reshape((len(data), 2))
 
     def _one_error(self, data, q):
         """Private function to be used for parallel error calculation
@@ -203,16 +227,13 @@ class SOM(object):
         :param d: {int} length of Manhattan distance to explore the neighborhood (0: only same neuron as data point)
         :return: {numpy.ndarray} found neighbors (labels)
         """
+        if not self.winner_indices:
+            print("Calculating neuron indices for all data points...")
+            self.winner_neurons(data)
         w = np.array(self.winner(datapoint)).reshape((1, 2))
         print("Winner neuron of data point: [%i, %i]" % (w[0, 0], w[0, 1]))
-        rslt = np.zeros((len(labels), 2))
-        for cnt, xx in enumerate(data):
-            [x, y] = self.winner(xx)
-            rslt[cnt, 0] = x
-            rslt[cnt, 1] = y
-        dists = cdist(w, rslt, 'cityblock').flatten()
-        matches = np.where(dists <= d)[0]
-        return labels[matches]
+        dists = cdist(w, self.winner_indices, 'cityblock').flatten()
+        return labels[np.where(dists <= d)[0]]
 
     def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, mol_dict=None,
                        density=True, activities=None):
