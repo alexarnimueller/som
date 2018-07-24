@@ -43,42 +43,11 @@ class SOM(object):
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
-        self.winner_indices = None
+        self.winner_indices = np.array([])
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
         self.history = list()  # reconstruction error training history
-
-    def winner(self, vector):
-        """ Compute the winner neuron closest to the vector (Euclidean distance)
-        
-        :param vector: {numpy.ndarray} vector of current data point(s)
-        :return: indices of winning neuron
-        """
-        delta = np.abs(self.map - vector)
-        dists = np.sum(delta ** 2, axis=2)
-        indx = np.argmin(dists)
-        return np.array([indx / self.x, indx % self.y])
-
-    def cycle(self, vector):
-        """ Perform one iteration in adapting the SOM towards the chosen data point
-        
-        :param vector: {numpy.ndarray} current data point
-        """
-        w = self.winner(vector)
-        # get Manhattan distance (with PBC) of every neuron in the map to the winner
-        dists = man_dist_pbc(self.indxmap, w, self.shape)
-
-        # smooth the distances with the current sigma
-        h = np.exp(-(dists / self.sigmas[self.epoch]) ** 2).reshape(self.x, self.y, 1)
-
-        # update neuron weights
-        self.map -= h * self.alphas[self.epoch] * (self.map - vector)
-
-        print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
-              (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
-
-        self.epoch = self.epoch + 1
 
     def initialize(self, data, how='pca'):
         """ Initialize the SOM neurons
@@ -96,20 +65,50 @@ class SOM(object):
 
         self.inizialized = True
 
-    def fit(self, data, epochs, batch_size=1, save_e=True, interval=1000, decay='hill'):
+    def winner(self, vector):
+        """ Compute the winner neuron closest to the vector (Euclidean distance)
+
+        :param vector: {numpy.ndarray} vector of current data point(s)
+        :return: indices of winning neuron
+        """
+        indx = np.argmin(np.sum((self.map - vector) ** 2, axis=2))
+        return np.array([indx / self.x, indx % self.y])
+
+    def cycle(self, vector):
+        """ Perform one iteration in adapting the SOM towards the chosen data point
+
+        :param vector: {numpy.ndarray} current data point
+        """
+        w = self.winner(vector)
+        # get Manhattan distance (with PBC) of every neuron in the map to the winner
+        dists = man_dist_pbc(self.indxmap, w, self.shape)
+        # smooth the distances with the current sigma
+        h = np.exp(-(dists / self.sigmas[self.epoch]) ** 2).reshape(self.x, self.y, 1)
+        # update neuron weights
+        self.map -= h * self.alphas[self.epoch] * (self.map - vector)
+
+        print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
+              (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
+        self.epoch = self.epoch + 1
+
+    def fit(self, data, epochs=0, save_e=False, interval=1000, decay='hill'):
         """ Train the SOM on the given data for several iterations
 
         :param data: {numpy.ndarray} data to train on
-        :param epochs: {int} number of iterations to train
-        :param batch_size: {int} number of data points to consider per iteration
-        i:param save_e: {bool} whether to save the error history
+        :param epochs: {int} number of iterations to train; if 0, epochs=len(data) and every data point is used once
+        :param save_e: {bool} whether to save the error history
         :param interval: {int} interval of epochs to use for saving training errors
         :param decay: {str} type of decay for alpha and sigma. Choose from 'hill' (Hill function) and 'linear', with
             'hill' having the form ``y = 1 / (1 + (x / 0.5) **4)``
         """
+        self.interval = interval
         if not self.inizialized:
             self.initialize(data)
-        self.interval = interval
+        if not epochs:
+            epochs = len(data)
+            indx = np.random.choice(np.arange(len(data)), epochs, replace=False)
+        else:
+            indx = np.random.choice(np.arange(len(data)), epochs)
 
         # get alpha and sigma decays for given number of epochs or for hill decay
         if decay == 'hill':
@@ -120,13 +119,14 @@ class SOM(object):
             self.alphas = np.linspace(self.alpha_start, 0.05, epochs)
             self.sigmas = np.linspace(self.sigma, 1, epochs)
 
-        samples = np.arange(len(data))
-        for i in range(epochs):
-            indx = np.random.choice(samples, batch_size)
-            self.cycle(data[indx])
-            if save_e:  # save the error to history every "interval" epochs
+        if save_e:  # save the error to history every "interval" epochs
+            for i in range(epochs):
+                self.cycle(data[indx[i]])
                 if i % interval == 0:
                     self.history.append(self.som_error(data))
+        else:
+            for i in range(epochs):
+                self.cycle(data[indx[i]])
         self.error = self.som_error(data)
 
     def transform(self, data):
@@ -172,7 +172,7 @@ class SOM(object):
         :param q: {multiprocessing.Queue} queue
         :return: {list} winner neuron cooridnates for every datapoint
         """
-        q.put(np.array([list(self.winner(d)) for d in data], dtype='int'))
+        q.put(np.array([self.winner(d) for d in data], dtype='int'))
 
     def winner_neurons(self, data):
         """ For every datapoint, get the winner neuron coordinates.
@@ -180,12 +180,14 @@ class SOM(object):
         :param data: {numpy.ndarray} data to compute the winner neurons on
         :return: {numpy.ndarray} winner neuron coordinates for every datapoint
         """
+        print("Calculating neuron indices for all data points...")
         queue = Queue()
-        for d in np.array_split(np.array(data), cpu_count()):
+        n = cpu_count() - 1
+        for d in np.array_split(np.array(data), n):
             p = Process(target=self._one_winner_neuron, args=(d, queue,))
             p.start()
         rslt = []
-        for _ in range(cpu_count()):
+        for _ in range(n):
             rslt.extend(queue.get(10))
         self.winner_indices = np.array(rslt, dtype='int').reshape((len(data), 2))
 
@@ -227,8 +229,7 @@ class SOM(object):
         :param d: {int} length of Manhattan distance to explore the neighborhood (0: only same neuron as data point)
         :return: {numpy.ndarray} found neighbors (labels)
         """
-        if not self.winner_indices:
-            print("Calculating neuron indices for all data points...")
+        if not len(self.winner_indices):
             self.winner_neurons(data)
         w = np.array(self.winner(datapoint)).reshape((1, 2))
         print("Winner neuron of data point: [%i, %i]" % (w[0, 0], w[0, 1]))
