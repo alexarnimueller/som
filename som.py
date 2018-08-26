@@ -72,7 +72,7 @@ class SOM(object):
         :return: indices of winning neuron
         """
         indx = np.argmin(np.sum((self.map - vector) ** 2, axis=2))
-        return np.array([indx / self.x, indx % self.y])
+        return np.array([indx // self.y, indx % self.y]) # divmod(indx, self.y)
 
     def cycle(self, vector):
         """ Perform one iteration in adapting the SOM towards the chosen data point
@@ -137,7 +137,7 @@ class SOM(object):
         """
         m = self.map.reshape((self.x * self.y, self.map.shape[-1]))
         dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
-        return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
+        return (dotprod / (np.exp(dotprod.max()) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
     def distance_map(self, metric='euclidean'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
@@ -151,7 +151,7 @@ class SOM(object):
             for y in range(self.y):
                 d = cdist(self.map[x, y].reshape((1, -1)), self.map.reshape((-1, self.map.shape[-1])), metric=metric)
                 dists[x, y] = np.mean(d)
-        self.distmap = dists / float(np.max(dists))
+        self.distmap = dists / dists.max()
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
