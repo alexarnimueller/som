@@ -75,7 +75,7 @@ class SOM(object):
         return np.array([indx / self.x, indx % self.y])
 
     def cycle(self, vector):
-        """ Perform one iteration in adapting the SOM towards the chosen data point
+        """ Perform one iteration in adapting the SOM towards a chosen data point
 
         :param vector: {numpy.ndarray} current data point
         """
@@ -276,8 +276,8 @@ class SOM(object):
         ax.set_aspect('equal')
         ax.set_xlim([0, self.x])
         ax.set_ylim([0, self.y])
-        ax.set_xticks(np.arange(self.x))
-        ax.set_yticks(np.arange(self.y))
+        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
         ax.grid(which='both')
 
         if not activities:
@@ -315,8 +315,8 @@ class SOM(object):
         fig, ax = plt.subplots(figsize=self.shape)
         plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(self.x))
-        plt.yticks(np.arange(self.y))
+        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
         ax.set_aspect('equal')
 
         if mol_dict:
@@ -337,13 +337,13 @@ class SOM(object):
         else:
             return fig, ax
 
-    def plot_class_density(self, data, targets, t, names, colormap='Oranges', mol_dict=None, filename=None):
+    def plot_class_density(self, data, targets, t=1, name='actives', colormap='Oranges', mol_dict=None, filename=None):
         """ Plot a density map only for the given class
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param targets: {list/array} array of target classes (0 to len(targetnames)) corresponding to data
         :param t: {int} target class to plot the density map for
-        :param names: {list} list of target names corresponding to targets
+        :param name: {str} target name corresponding to target given in t
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
             values. These molecules will be mapped onto the density map and marked
@@ -355,9 +355,9 @@ class SOM(object):
         fig, ax = plt.subplots(figsize=self.shape)
         plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(self.x))
-        plt.yticks(np.arange(self.y))
-        plt.title(names[t], fontweight='bold', fontsize=28)
+        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.title(name, fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
         plt.text(0.1, -1., "%i Datapoints" % len(t_data), fontsize=20, fontweight='bold')
 
@@ -388,8 +388,8 @@ class SOM(object):
         fig, ax = plt.subplots(figsize=self.shape)
         plt.pcolormesh(self.distmap, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(self.x))
-        plt.yticks(np.arange(self.y))
+        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
         plt.title("Distance Map", fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
         if filename:
