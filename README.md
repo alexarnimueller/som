@@ -23,13 +23,13 @@ data2 = np.random.normal(loc=.25, scale=0.5, size=(500, 36))
 data = np.vstack((data1, data2))
 
 som = SOM(10, 10)  # initialize the SOM
-som.fit(data, 2000)  # fit the SOM for 2000 epochs
+som.fit(data, 10000)  # fit the SOM for 10000 epochs
 
 targets = 500 * [0] + 500 * [1]  # create some dummy target values
 
 # now visualize the learned representation with the class labels
-som.plot_point_map(data, targets, ['class 1', 'class 2'], filename='som.png')
-som.plot_class_density(data, targets, 0, filename='class_0.png')
+som.plot_point_map(data, targets, ['Class 0', 'Class 1'], filename='som.png')
+som.plot_class_density(data, targets, t=0, name='Class 0', filename='class_0.png')
 ```
 
 The same way you can handle your own data.
@@ -44,7 +44,7 @@ The `SOM` class has the following methods:
 - `som_error(data)`: calculates the overall error as the average difference between the winning neurons and the `data`
 - `plot_point_map(data, targets, targetnames, filename=None, colors=None, markers=None, density=True)`: visualize the som with all data as points around the neurons
 - `plot_density_map(data, filename=None, internal=False)`: visualize the data density in different areas of the SOM.
-- `plot_class_density(data, targets, t, colormap='Oranges', filename=None)`: plot a density map only for the given class
+- `plot_class_density(data, targets, t, name, colormap='Oranges', filename=None)`: plot a density map only for the given class
 
 
 ### References:
