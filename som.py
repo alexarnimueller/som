@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mptchs
@@ -22,7 +23,7 @@ def man_dist_pbc(m, vector, shape=(10, 10)):
 
 
 class SOM(object):
-    def __init__(self, x, y, alpha_start=0.6, seed=42):
+    def __init__(self, x, y, alpha_start=0.6, seed=None):
         """ Initialize the SOM object with a given map size
         
         :param x: {int} width of the map
@@ -39,7 +40,7 @@ class SOM(object):
         self.alphas = None
         self.sigmas = None
         self.epoch = 0
-        self.interval = int()
+        self.interval = 0
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
@@ -47,7 +48,7 @@ class SOM(object):
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
-        self.history = list()  # reconstruction error training history
+        self.history = []  # reconstruction error training history
 
     def initialize(self, data, how='pca'):
         """ Initialize the SOM neurons
@@ -72,7 +73,7 @@ class SOM(object):
         :return: indices of winning neuron
         """
         indx = np.argmin(np.sum((self.map - vector) ** 2, axis=2))
-        return np.array([indx / self.x, indx % self.y])
+        return np.array([indx // self.y, indx % self.y])
 
     def cycle(self, vector):
         """ Perform one iteration in adapting the SOM towards a chosen data point
