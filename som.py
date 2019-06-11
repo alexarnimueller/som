@@ -440,7 +440,7 @@ class SOM(object):
         """ Save the SOM instance to a pickle file.
 
         :param filename: {str} filename (best to end with .p)
-        :return: saved instance in file with name ``filename``
+        :return: updated instance with data from ``filename``
         """
         f = open(filename, 'rb')
         tmp_dict = pickle.load(f)
