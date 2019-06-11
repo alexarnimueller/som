@@ -35,16 +35,16 @@ som.plot_distance_map(filename='images/distance_map.png')  # plot the distance m
 ```
 
 #### Training Error:
-![Point Map](https://github.com/alexarnimueller/som/blob/master/som_error.png?raw=true)
+![Point Map](https://github.com/alexarnimueller/som/blob/master/images/som_error.png?raw=true)
 
 #### Point Map:
-![Point Map](https://github.com/alexarnimueller/som/blob/master/som.png?raw=true)
+![Point Map](https://github.com/alexarnimueller/som/blob/master/images/som.png?raw=true)
 
 #### Class Density:
-![Class Density Map](https://github.com/alexarnimueller/som/blob/master/class_0.png?raw=true)
+![Class Density Map](https://github.com/alexarnimueller/som/blob/master/images/class_0.png?raw=true)
 
 #### Distance Map:
-![Distance Map](https://github.com/alexarnimueller/som/blob/master/distance_map.png?raw=true)
+![Distance Map](https://github.com/alexarnimueller/som/blob/master/images/distance_map.png?raw=true)
 
 The same way you can handle your own data.
 
