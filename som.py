@@ -355,6 +355,7 @@ class SOM(object):
         :param filename: {str} optional, if given, the plot is saved to this location
         :return: plot shown or saved if a filename is given
         """
+        targets = np.array(targets)
         t_data = data[np.where(targets == t)[0]]
         wm = self.winner_map(t_data)
         fig, ax = plt.subplots(figsize=self.shape)
