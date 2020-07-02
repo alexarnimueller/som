@@ -42,6 +42,7 @@ newdata = np.random.normal(loc=.25, scale=0.5, size=(10, 36))
 transformed = som.transform(newdata)
 print("Old shape of the data:", newdata.shape)
 print("New shape of the data:", transformed.shape)
+
 ```
 
 #### Training Error:
