@@ -23,7 +23,7 @@ def man_dist_pbc(m, vector, shape=(10, 10)):
 
 
 class SOM(object):
-    def __init__(self, x, y, alpha_start=0.6, seed=42):
+    def __init__(self, x, y, alpha_start=0.6, seed=None):
         """ Initialize the SOM object with a given map size
         
         :param x: {int} width of the map
@@ -40,7 +40,7 @@ class SOM(object):
         self.alphas = None
         self.sigmas = None
         self.epoch = 0
-        self.interval = int()
+        self.interval = 0
         self.map = np.array([])
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
@@ -48,7 +48,7 @@ class SOM(object):
         self.pca = None  # attribute to save potential PCA to for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
-        self.history = list()  # reconstruction error training history
+        self.history = []  # reconstruction error training history
 
     def initialize(self, data, how='pca'):
         """ Initialize the SOM neurons
@@ -73,7 +73,7 @@ class SOM(object):
         :return: indices of winning neuron
         """
         indx = np.argmin(np.sum((self.map - vector) ** 2, axis=2))
-        return np.array([int(indx / self.x), indx % self.y])
+        return np.array([indx // self.y, indx % self.y])
 
     def cycle(self, vector):
         """ Perform one iteration in adapting the SOM towards a chosen data point
@@ -137,8 +137,8 @@ class SOM(object):
         :return: transformed data in the SOM space
         """
         m = self.map.reshape((self.x * self.y, self.map.shape[-1]))
-        dotprod = np.dot(np.exp(data), np.exp(m.T)) / np.sum(np.exp(m), axis=1)
-        return (dotprod / (np.exp(np.max(dotprod)) + 1e-8)).reshape(data.shape[0], self.x, self.y)
+        dotprod = np.exp(data).dot(np.exp(m.T)) / np.exp(m).sum(axis=1)
+        return (dotprod / (np.exp(dotprod.max()) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
     def distance_map(self, metric='euclidean'):
         """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
@@ -152,7 +152,7 @@ class SOM(object):
             for y in range(self.y):
                 d = cdist(self.map[x, y].reshape((1, -1)), self.map.reshape((-1, self.map.shape[-1])), metric=metric)
                 dists[x, y] = np.mean(d)
-        self.distmap = dists / float(np.max(dists))
+        self.distmap = dists / dists.max()
 
     def winner_map(self, data):
         """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
@@ -199,11 +199,11 @@ class SOM(object):
         :param q: {multiprocessing.Queue} queue
         :return: {list} list of SOM errors
         """
-        errs = list()
+        errs = []
         for d in data:
-            w = self.winner(d)
-            dist = self.map[w[0], w[1]] - d
-            errs.append(np.sqrt(np.dot(dist, dist.T)))
+            [x, y] = self.winner(d)
+            dist = self.map[x, y] - d
+            errs.append(np.sqrt(dist.dot(dist.T)))
         q.put(errs)
 
     def som_error(self, data):
