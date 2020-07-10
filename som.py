@@ -1,10 +1,11 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import pickle
+from multiprocessing import cpu_count, Process, Queue
+
 import matplotlib.patches as mptchs
-import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
-from multiprocessing import cpu_count, Process, Queue
 
 
 def man_dist_pbc(m, vector, shape=(10, 10)):
@@ -217,8 +218,8 @@ class SOM(object):
             p.start()
         rslt = []
         for _ in range(cpu_count()):
-            rslt.extend(queue.get(10))
-        return sum(rslt) / float(len(data))
+            rslt.extend(queue.get(50))
+        return float(sum(rslt) / float(len(data)))
 
     def get_neighbors(self, datapoint, data, labels, d=0):
         """ return the neighboring data instances and their labels for a given data point of interest
@@ -231,12 +232,13 @@ class SOM(object):
         """
         if not len(self.winner_indices):
             self.winner_neurons(data)
-        w = np.array(self.winner(datapoint)).reshape((1, 2))
-        print("Winner neuron of data point: [%i, %i]" % (w[0, 0], w[0, 1]))
-        dists = cdist(w, self.winner_indices, 'cityblock').flatten()
+        labels = np.array(labels)
+        w = self.winner(datapoint)
+        print("Winner neuron of given data point: [%i, %i]" % (w[0], w[1]))
+        dists = np.array([man_dist_pbc(winner, w, self.shape) for winner in self.winner_indices]).flatten()
         return labels[np.where(dists <= d)[0]]
 
-    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, mol_dict=None,
+    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, example_dict=None,
                        density=True, activities=None):
         """ Visualize the som with all data as points around the neurons
 
@@ -246,7 +248,8 @@ class SOM(object):
         :param filename: {str} optional, if given, the plot is saved to this location
         :param colors: {list/array} optional, if given, different classes are colored in these colors
         :param markers: {list/array} optional, if given, different classes are visualized with these markers
-        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
+        :param example_dict: {dict} dictionary containing names of examples as keys and corresponding descriptor values
+            as values. These examples will be mapped onto the density map and marked
         :param density: {bool} whether to plot the density map with winner neuron counts in the background
         :param activities: {list/array} list of activities (e.g. IC50 values) to use for coloring the points
             accordingly; high values will appear in blue, low values in green
@@ -286,8 +289,8 @@ class SOM(object):
                                 mode="expand", borderaxespad=0.1)
             legend.get_frame().set_facecolor('#e5e5e5')
 
-        if mol_dict:
-            for k, v in mol_dict.items():
+        if example_dict:
+            for k, v in example_dict.items():
                 w = self.winner(v)
                 x = w[1] + 0.5 + np.random.normal(0, 0.15)
                 y = w[0] + 0.5 + np.random.normal(0, 0.15)
@@ -301,13 +304,14 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_density_map(self, data, colormap='Oranges', filename=None, mol_dict=None, internal=False):
+    def plot_density_map(self, data, colormap='Oranges', filename=None, example_dict=None, internal=False):
         """ Visualize the data density in different areas of the SOM.
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param filename: {str} optional, if given, the plot is saved to this location
-        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
+        :param example_dict: {dict} dictionary containing names of examples as keys and corresponding descriptor values
+            as values. These examples will be mapped onto the density map and marked
         :param internal: {bool} if True, the current plot will stay open to be used for other plot functions
         :return: plot shown or saved if a filename is given
         """
@@ -319,8 +323,8 @@ class SOM(object):
         plt.yticks(np.arange(.5, self.y + .5), range(self.y))
         ax.set_aspect('equal')
 
-        if mol_dict:
-            for k, v in mol_dict.items():
+        if example_dict:
+            for k, v in example_dict.items():
                 w = self.winner(v)
                 x = w[1] + 0.5 + np.random.normal(0, 0.15)
                 y = w[0] + 0.5 + np.random.normal(0, 0.15)
@@ -337,7 +341,8 @@ class SOM(object):
         else:
             return fig, ax
 
-    def plot_class_density(self, data, targets, t=1, name='actives', colormap='Oranges', mol_dict=None, filename=None):
+    def plot_class_density(self, data, targets, t=1, name='actives', colormap='Oranges', example_dict=None,
+                           filename=None):
         """ Plot a density map only for the given class
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
@@ -345,11 +350,12 @@ class SOM(object):
         :param t: {int} target class to plot the density map for
         :param name: {str} target name corresponding to target given in t
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
-        :param mol_dict: {dict} dictionary containing molecule names as keys and corresponding descriptor values as
-            values. These molecules will be mapped onto the density map and marked
+        :param example_dict: {dict} dictionary containing names of examples as keys and corresponding descriptor values
+            as values. These examples will be mapped onto the density map and marked
         :param filename: {str} optional, if given, the plot is saved to this location
         :return: plot shown or saved if a filename is given
         """
+        targets = np.array(targets)
         t_data = data[np.where(targets == t)[0]]
         wm = self.winner_map(t_data)
         fig, ax = plt.subplots(figsize=self.shape)
@@ -361,8 +367,8 @@ class SOM(object):
         ax.set_aspect('equal')
         plt.text(0.1, -1., "%i Datapoints" % len(t_data), fontsize=20, fontweight='bold')
 
-        if mol_dict:
-            for k, v in mol_dict.items():
+        if example_dict:
+            for k, v in example_dict.items():
                 w = self.winner(v)
                 x = w[1] + 0.5 + np.random.normal(0, 0.15)
                 y = w[0] + 0.5 + np.random.normal(0, 0.15)
@@ -434,7 +440,7 @@ class SOM(object):
         """ Save the SOM instance to a pickle file.
 
         :param filename: {str} filename (best to end with .p)
-        :return: saved instance in file with name ``filename``
+        :return: updated instance with data from ``filename``
         """
         f = open(filename, 'rb')
         tmp_dict = pickle.load(f)
