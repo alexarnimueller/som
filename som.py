@@ -75,10 +75,11 @@ class SOM(object):
         indx = np.argmin(np.sum((self.map - vector) ** 2, axis=2))
         return np.array([indx // self.y, indx % self.y])
 
-    def cycle(self, vector):
+    def cycle(self, vector, verbose=True):
         """ Perform one iteration in adapting the SOM towards a chosen data point
 
         :param vector: {numpy.ndarray} current data point
+        :param verbose: {bool} verbosity control
         """
         w = self.winner(vector)
         # get Manhattan distance (with PBC) of every neuron in the map to the winner
@@ -87,12 +88,13 @@ class SOM(object):
         h = np.exp(-(dists / self.sigmas[self.epoch]) ** 2).reshape(self.x, self.y, 1)
         # update neuron weights
         self.map -= h * self.alphas[self.epoch] * (self.map - vector)
-
-        print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
-              (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
+        
+        if verbose:
+            print("Epoch %i;    Neuron [%i, %i];    \tSigma: %.4f;    alpha: %.4f" %
+                  (self.epoch, w[0], w[1], self.sigmas[self.epoch], self.alphas[self.epoch]))
         self.epoch = self.epoch + 1
 
-    def fit(self, data, epochs=0, save_e=False, interval=1000, decay='hill'):
+    def fit(self, data, epochs=0, save_e=False, interval=1000, decay='hill', verbose=True):
         """ Train the SOM on the given data for several iterations
 
         :param data: {numpy.ndarray} data to train on
@@ -101,6 +103,7 @@ class SOM(object):
         :param interval: {int} interval of epochs to use for saving training errors
         :param decay: {str} type of decay for alpha and sigma. Choose from 'hill' (Hill function) and 'linear', with
             'hill' having the form ``y = 1 / (1 + (x / 0.5) **4)``
+        :param verbose: {bool} verbosity control
         """
         self.interval = interval
         if not self.inizialized:
@@ -122,12 +125,12 @@ class SOM(object):
 
         if save_e:  # save the error to history every "interval" epochs
             for i in range(epochs):
-                self.cycle(data[indx[i]])
+                self.cycle(data[indx[i]], verbose=verbose)
                 if i % interval == 0:
                     self.history.append(self.som_error(data))
         else:
             for i in range(epochs):
-                self.cycle(data[indx[i]])
+                self.cycle(data[indx[i]], verbose=verbose)
         self.error = self.som_error(data)
 
     def transform(self, data):
