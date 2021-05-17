@@ -78,7 +78,7 @@ The `SOM` class has the following methods:
 - `plot_point_map(data, targets, targetnames, filename=None, colors=None, markers=None, density=True)`: visualize the som with all data as points around the neurons
 - `plot_density_map(data, filename=None, internal=False)`: visualize the data density in different areas of the SOM.
 - `plot_class_density(data, targets, t, name, colormap='Oranges', filename=None)`: plot a density map only for the given class
-- `plot_dostance_map(colormap='Oranges', filename=None)`: visualize the disance of the neurons in the trained SOM
+- `plot_distance_map(colormap='Oranges', filename=None)`: visualize the disance of the neurons in the trained SOM
 - `plot_error_history(color='orange', filename=None)`: visualize the training error history after training (fit with `save_e=True`)
 
 ### References:
