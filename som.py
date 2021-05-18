@@ -455,7 +455,7 @@ class SOM(object):
         f.close()
 
     def load(self, filename):
-        """ Save the SOM instance to a pickle file.
+        """ Load a SOM instance from a pickle file.
 
         :param filename: {str} filename (best to end with .p)
         :return: updated instance with data from ``filename``
