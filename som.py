@@ -198,6 +198,7 @@ class SOM(object):
         for _ in range(n):
             rslt.extend(queue.get(10))
         self.winner_indices = np.array(rslt, dtype='int').reshape((len(data), 2))
+        return self.winner_indices
 
     def _one_error(self, data, q):
         """Private function to be used for parallel error calculation
@@ -238,7 +239,7 @@ class SOM(object):
         :return: {numpy.ndarray} found neighbors (labels)
         """
         if not len(self.winner_indices):
-            self.winner_neurons(data)
+            _ = self.winner_neurons(data)
         labels = np.array(labels)
         w = self.winner(datapoint)
         print("Winner neuron of given data point: [%i, %i]" % (w[0], w[1]))
