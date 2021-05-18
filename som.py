@@ -55,8 +55,8 @@ class SOM(object):
         """ Initialize the SOM neurons
 
         :param data: {numpy.ndarray} data to use for initialization
-        :param how: {str} how to initialize the map, available: 'pca' (via 4 first eigenvalues) or 'random' (via random
-            values normally distributed like data)
+        :param how: {str} how to initialize the map, available: `pca` (via 4 first eigenvalues) or `random` (via random
+            values normally distributed in the shape of `data`)
         :return: initialized map in self.map
         """
         self.map = np.random.normal(np.mean(data), np.std(data), size=(self.x, self.y, len(data[0])))
@@ -214,7 +214,7 @@ class SOM(object):
         """ Calculates the overall error as the average difference between the winning neurons and the data points
 
         :param data: {numpy.ndarray}
-        :return: normalized error
+        :return: {float} normalized error
         """
         queue = Queue()
         for d in np.array_split(np.array(data), cpu_count()):
@@ -226,12 +226,12 @@ class SOM(object):
         return float(sum(rslt) / float(len(data)))
 
     def get_neighbors(self, datapoint, data, labels, d=0):
-        """ return the neighboring data instances and their labels for a given data point of interest
+        """ return the labels of the neighboring data instances at distance `d` for a given data point of interest
 
         :param datapoint: {numpy.ndarray} descriptor vector of the data point of interest to check for neighbors
-        :param data: {numpy.ndarray} reference data to compare ``datapoint`` to
-        :param labels: {numpy.ndarray} array of labels describing the target classes for every data point in ``data``
-        :param d: {int} length of Manhattan distance to explore the neighborhood (0: only same neuron as data point)
+        :param data: {numpy.ndarray} reference data to compare `datapoint` to
+        :param labels: {numpy.ndarray} array of labels describing the target classes for every data point in `data`
+        :param d: {int} length of Manhattan distance to explore the neighborhood (0: same neuron as data point)
         :return: {numpy.ndarray} found neighbors (labels)
         """
         if not len(self.winner_indices):
