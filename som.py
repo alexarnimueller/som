@@ -23,12 +23,13 @@ def man_dist_pbc(m, vector, shape=(10, 10)):
 
 
 class SOM(object):
-    def __init__(self, x, y, alpha_start=0.6, seed=None):
+    def __init__(self, x, y, alpha_start=0.6, sigma_start=None, seed=None):
         """ Initialize the SOM object with a given map size
         
         :param x: {int} width of the map
         :param y: {int} height of the map
-        :param alpha_start: {float} initial alpha at training start
+        :param alpha_start: {float} initial alpha (learning rate) at training start
+        :param sigma_start: {float} initial sigma (restraint / neighborhood function) at training start; if `None`: x / 2
         :param seed: {int} random seed to use
         """
         np.random.seed(seed)
