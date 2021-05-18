@@ -289,6 +289,8 @@ class SOM(object):
         ax.set_ylim([0, self.x])
         plt.xticks(np.arange(.5, self.y + .5), range(self.y))
         plt.yticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.xlabel('y')
+        plt.ylabel('x')
         ax.grid(which='both')
 
         if not activities:
@@ -329,6 +331,8 @@ class SOM(object):
         plt.colorbar()
         plt.xticks(np.arange(.5, self.y + .5), range(self.y))
         plt.yticks(np.arange(.5, self.x + .5), range(self.x))
+        plt.xlabel('y')
+        plt.ylabel('x')
         ax.set_aspect('equal')
 
         if example_dict:
@@ -340,6 +344,7 @@ class SOM(object):
                 plt.annotate(k, xy=(x + 0.5, y - 0.18), textcoords='data', fontsize=18, fontweight='bold')
 
         if not internal:
+            plt.title("Density Map")
             if filename:
                 plt.savefig(filename)
                 plt.close()
@@ -372,6 +377,8 @@ class SOM(object):
         plt.xticks(np.arange(.5, self.y + .5), range(self.y))
         plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         plt.title(name, fontweight='bold', fontsize=28)
+        plt.xlabel('y')
+        plt.ylabel('x')
         ax.set_aspect('equal')
         plt.text(0.1, -1., "%i Datapoints" % len(t_data), fontsize=20, fontweight='bold')
 
@@ -405,6 +412,8 @@ class SOM(object):
         plt.xticks(np.arange(.5, self.y + .5), range(self.y))
         plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         plt.title("Distance Map", fontweight='bold', fontsize=28)
+        plt.xlabel('y')
+        plt.ylabel('x')
         ax.set_aspect('equal')
         if filename:
             plt.savefig(filename)
