@@ -245,8 +245,8 @@ class SOM(object):
         dists = np.array([man_dist_pbc(winner, w, self.shape) for winner in self.winner_indices]).flatten()
         return labels[np.where(dists <= d)[0]]
 
-    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, example_dict=None,
-                       density=True, activities=None):
+    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, colormap='Oranges', 
+                       example_dict=None, density=True, activities=None):
         """ Visualize the som with all data as points around the neurons
 
         :param data: {numpy.ndarray} data to visualize with the SOM
@@ -255,6 +255,7 @@ class SOM(object):
         :param filename: {str} optional, if given, the plot is saved to this location
         :param colors: {list/array} optional, if given, different classes are colored in these colors
         :param markers: {list/array} optional, if given, different classes are visualized with these markers
+        :param colormap: {str} colormap to use, select from matplolib sequential colormaps
         :param example_dict: {dict} dictionary containing names of examples as keys and corresponding descriptor values
             as values. These examples will be mapped onto the density map and marked
         :param density: {bool} whether to plot the density map with winner neuron counts in the background
@@ -270,7 +271,7 @@ class SOM(object):
             heatmap = plt.get_cmap('coolwarm').reversed()
             colors = [heatmap(a / max(activities)) for a in activities]
         if density:
-            fig, ax = self.plot_density_map(data, internal=True)
+            fig, ax = self.plot_density_map(data, colormap=colormap, internal=True)
         else:
             fig, ax = plt.subplots(figsize=(self.y, self.x))
 
