@@ -245,7 +245,7 @@ class SOM(object):
         dists = np.array([man_dist_pbc(winner, w, self.shape) for winner in self.winner_indices]).flatten()
         return labels[np.where(dists <= d)[0]]
 
-    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, colormap='Oranges', 
+    def plot_point_map(self, data, targets, targetnames, filename=None, colors=None, markers=None, colormap='gray', 
                        example_dict=None, density=True, activities=None):
         """ Visualize the som with all data as points around the neurons
 
@@ -312,7 +312,7 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_density_map(self, data, colormap='Oranges', filename=None, example_dict=None, internal=False):
+    def plot_density_map(self, data, colormap='gray', filename=None, example_dict=None, internal=False):
         """ Visualize the data density in different areas of the SOM.
 
         :param data: {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)
@@ -349,7 +349,7 @@ class SOM(object):
         else:
             return fig, ax
 
-    def plot_class_density(self, data, targets, t=1, name='actives', colormap='Oranges', example_dict=None,
+    def plot_class_density(self, data, targets, t=1, name='actives', colormap='gray', example_dict=None,
                            filename=None):
         """ Plot a density map only for the given class
 
@@ -390,7 +390,7 @@ class SOM(object):
         else:
             plt.show()
 
-    def plot_distance_map(self, colormap='Oranges', filename=None):
+    def plot_distance_map(self, colormap='gray', filename=None):
         """ Plot the distance map after training.
 
         :param colormap: {str} colormap to use, select from matplolib sequential colormaps
