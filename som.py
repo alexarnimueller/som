@@ -196,7 +196,7 @@ class SOM(object):
             p.start()
         rslt = []
         for _ in range(n):
-            rslt.extend(queue.get(10))
+            rslt.extend(queue.get(timeout=10))
         self.winner_indices = np.array(rslt, dtype='int').reshape((len(data), 2))
         return self.winner_indices
 
@@ -226,7 +226,7 @@ class SOM(object):
             p.start()
         rslt = []
         for _ in range(cpu_count()):
-            rslt.extend(queue.get(50))
+            rslt.extend(queue.get(timeout=50))
         return float(sum(rslt) / float(len(data)))
 
     def get_neighbors(self, datapoint, data, labels, d=0):
