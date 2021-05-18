@@ -36,7 +36,10 @@ class SOM(object):
         self.x = x
         self.y = y
         self.shape = (x, y)
-        self.sigma = x / 2.
+        if sigma_start:
+            self.sigma = sigma_start
+        else:
+            self.sigma = x / 2.           
         self.alpha_start = alpha_start
         self.alphas = None
         self.sigmas = None
@@ -46,7 +49,7 @@ class SOM(object):
         self.indxmap = np.stack(np.unravel_index(np.arange(x * y, dtype=int).reshape(x, y), (x, y)), 2)
         self.distmap = np.zeros((self.x, self.y))
         self.winner_indices = np.array([])
-        self.pca = None  # attribute to save potential PCA to for saving and later reloading
+        self.pca = None  # attribute to save potential PCA for saving and later reloading
         self.inizialized = False
         self.error = 0.  # reconstruction error
         self.history = []  # reconstruction error training history
@@ -145,7 +148,7 @@ class SOM(object):
         return (dotprod / (np.exp(dotprod.max()) + 1e-8)).reshape(data.shape[0], self.x, self.y)
 
     def distance_map(self, metric='euclidean'):
-        """ Get the distance map of the neuron weights. Every cell is the normalised sum of all distances between
+        """ Get the distance map of the neuron weights. Every cell is the normalised average of all distances between
         the neuron and all other neurons.
 
         :param metric: {str} distance metric to be used (see ``scipy.spatial.distance.cdist``)
@@ -159,7 +162,7 @@ class SOM(object):
         self.distmap = dists / dists.max()
 
     def winner_map(self, data):
-        """ Get the number of times, a certain neuron in the trained SOM is winner for the given data.
+        """ Get the number of times, a certain neuron in the trained SOM is the winner for the given data.
 
         :param data: {numpy.ndarray} data to compute the winner neurons on
         :return: {numpy.ndarray} map with winner counts at corresponding neuron location
@@ -269,7 +272,7 @@ class SOM(object):
         if density:
             fig, ax = self.plot_density_map(data, internal=True)
         else:
-            fig, ax = plt.subplots(figsize=self.shape)
+            fig, ax = plt.subplots(figsize=(self.y, self.x))
 
         for cnt, xx in enumerate(data):
             if activities:
@@ -281,10 +284,10 @@ class SOM(object):
                     markers[targets[cnt]], color=c, markersize=12)
 
         ax.set_aspect('equal')
-        ax.set_xlim([0, self.x])
-        ax.set_ylim([0, self.y])
-        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
-        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
+        ax.set_xlim([0, self.y])
+        ax.set_ylim([0, self.x])
+        plt.xticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         ax.grid(which='both')
 
         if not activities:
@@ -320,11 +323,11 @@ class SOM(object):
         :return: plot shown or saved if a filename is given
         """
         wm = self.winner_map(data)
-        fig, ax = plt.subplots(figsize=self.shape)
+        fig, ax = plt.subplots(figsize=(self.y, self.x))
         plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
-        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.xticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         ax.set_aspect('equal')
 
         if example_dict:
@@ -362,11 +365,11 @@ class SOM(object):
         targets = np.array(targets)
         t_data = data[np.where(targets == t)[0]]
         wm = self.winner_map(t_data)
-        fig, ax = plt.subplots(figsize=self.shape)
+        fig, ax = plt.subplots(figsize=(self.y, self.x))
         plt.pcolormesh(wm, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
-        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.xticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         plt.title(name, fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
         plt.text(0.1, -1., "%i Datapoints" % len(t_data), fontsize=20, fontweight='bold')
@@ -395,11 +398,11 @@ class SOM(object):
         """
         if np.mean(self.distmap) == 0.:
             self.distance_map()
-        fig, ax = plt.subplots(figsize=self.shape)
+        fig, ax = plt.subplots(figsize=(self.y, self.x))
         plt.pcolormesh(self.distmap, cmap=colormap, edgecolors=None)
         plt.colorbar()
-        plt.xticks(np.arange(.5, self.x + .5), range(self.x))
-        plt.yticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.xticks(np.arange(.5, self.y + .5), range(self.y))
+        plt.yticks(np.arange(.5, self.x + .5), range(self.x))
         plt.title("Distance Map", fontweight='bold', fontsize=28)
         ax.set_aspect('equal')
         if filename:
