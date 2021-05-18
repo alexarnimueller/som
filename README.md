@@ -10,6 +10,7 @@ imagined as a "donut". The implementation uses `numpy`.
 
 ### Usage
 Download the file `som.py` and place it somewhere in your `PYTHONPATH`.
+If you don't have the standard packages in `requirements.txt` yet, install them via `pip install -r requirements.txt`.
 
 Then you can import and use the `SOM` class as follows: 
 
