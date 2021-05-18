@@ -31,8 +31,8 @@ targets = np.array(500 * [0] + 500 * [1])  # create some dummy target values
 
 # now visualize the learned representation with the class labels
 som.plot_point_map(data, targets, ['Class 0', 'Class 1'], filename='images/som.png')
-som.plot_class_density(data, targets, t=0, name='Class 0', filename='images/class_0.png')
-som.plot_distance_map(filename='images/distance_map.png')  # plot the distance map after training
+som.plot_class_density(data, targets, t=0, name='Class 0', colormap='Greens', filename='images/class_0.png')
+som.plot_distance_map(colormap='Blues', filename='images/distance_map.png')  # plot the distance map after training
 
 # predicting the class of a new, unknown datapoint
 datapoint = np.random.normal(loc=.25, scale=0.5, size=(1, 36))
