@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2. Documentation for the som module &#8212; som-pbc v1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Example Scripts" href="examples.html" />
+    <link rel="prev" title="1. som-pbc Readme" href="readme.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="3. Example Scripts"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="readme.html" title="1. som-pbc Readme"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">som-pbc v1.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Documentation for the som module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-som">
+<span id="documentation-for-the-som-module"></span><h1><span class="section-number">2. </span>Documentation for the som module<a class="headerlink" href="#module-som" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="som.man_dist_pbc">
+<span class="sig-prename descclassname"><span class="pre">som.</span></span><span class="sig-name descname"><span class="pre">man_dist_pbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#man_dist_pbc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.man_dist_pbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manhattan distance calculation of coordinates with periodic boundary condition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – {numpy.ndarray} array / matrix</p></li>
+<li><p><strong>vector</strong> – {numpy.ndarray} array / vector</p></li>
+<li><p><strong>shape</strong> – {tuple} shape of the SOM</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{numpy.ndarray} Manhattan distance for v to m</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="som.SOM">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">som.</span></span><span class="sig-name descname"><span class="pre">SOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class implementing a self-organizing map with periodic boundary conditions. It has the following methods:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the SOM object with a given map size</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – {int} width of the map</p></li>
+<li><p><strong>y</strong> – {int} height of the map</p></li>
+<li><p><strong>alpha_start</strong> – {float} initial alpha (learning rate) at training start</p></li>
+<li><p><strong>sigma_start</strong> – {float} initial sigma (restraint / neighborhood function) at training start; if <cite>None</cite>: x / 2</p></li>
+<li><p><strong>seed</strong> – {int} random seed to use</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pca'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the SOM neurons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – {numpy.ndarray} data to use for initialization</p></li>
+<li><p><strong>how</strong> – {str} how to initialize the map, available: <cite>pca</cite> (via 4 first eigenvalues) or <cite>random</cite> (via random
+values normally distributed in the shape of <cite>data</cite>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>initialized map in self.map</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.winner">
+<span class="sig-name descname"><span class="pre">winner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.winner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.winner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the winner neuron closest to the vector (Euclidean distance)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vector</strong> – {numpy.ndarray} vector of current data point(s)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>indices of winning neuron</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.cycle">
+<span class="sig-name descname"><span class="pre">cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform one iteration in adapting the SOM towards a chosen data point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vector</strong> – {numpy.ndarray} current data point</p></li>
+<li><p><strong>verbose</strong> – {bool} verbosity control</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hill'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train the SOM on the given data for several iterations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – {numpy.ndarray} data to train on</p></li>
+<li><p><strong>epochs</strong> – {int} number of iterations to train; if 0, epochs=len(data) and every data point is used once</p></li>
+<li><p><strong>save_e</strong> – {bool} whether to save the error history</p></li>
+<li><p><strong>interval</strong> – {int} interval of epochs to use for saving training errors</p></li>
+<li><p><strong>decay</strong> – {str} type of decay for alpha and sigma. Choose from ‘hill’ (Hill function) and ‘linear’, with
+‘hill’ having the form <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">(x</span> <span class="pre">/</span> <span class="pre">0.5)</span> <span class="pre">**4)</span></code></p></li>
+<li><p><strong>verbose</strong> – {bool} verbosity control</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform data in to the SOM space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – {numpy.ndarray} data to be transformed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transformed data in the SOM space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.distance_map">
+<span class="sig-name descname"><span class="pre">distance_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.distance_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.distance_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the distance map of the neuron weights. Every cell is the normalised average of all distances between
+the neuron and all other neurons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metric</strong> – {str} distance metric to be used (see <code class="docutils literal notranslate"><span class="pre">scipy.spatial.distance.cdist</span></code>)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>normalized sum of distances for every neuron to its neighbors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.winner_map">
+<span class="sig-name descname"><span class="pre">winner_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.winner_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.winner_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of times, a certain neuron in the trained SOM is the winner for the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – {numpy.ndarray} data to compute the winner neurons on</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{numpy.ndarray} map with winner counts at corresponding neuron location</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.winner_neurons">
+<span class="sig-name descname"><span class="pre">winner_neurons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.winner_neurons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.winner_neurons" title="Permalink to this definition">¶</a></dt>
+<dd><p>For every datapoint, get the winner neuron coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – {numpy.ndarray} data to compute the winner neurons on</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{numpy.ndarray} winner neuron coordinates for every datapoint</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.som_error">
+<span class="sig-name descname"><span class="pre">som_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.som_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.som_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the overall error as the average difference between the winning neurons and the data points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – {numpy.ndarray}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{float} normalized error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.get_neighbors">
+<span class="sig-name descname"><span class="pre">get_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.get_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.get_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the labels of the neighboring data instances at distance <cite>d</cite> for a given data point of interest</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datapoint</strong> – {numpy.ndarray} descriptor vector of the data point of interest to check for neighbors</p></li>
+<li><p><strong>data</strong> – {numpy.ndarray} reference data to compare <cite>datapoint</cite> to</p></li>
+<li><p><strong>labels</strong> – {numpy.ndarray} array of labels describing the target classes for every data point in <cite>data</cite></p></li>
+<li><p><strong>d</strong> – {int} length of Manhattan distance to explore the neighborhood (0: same neuron as data point)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{numpy.ndarray} found neighbors (labels)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.plot_point_map">
+<span class="sig-name descname"><span class="pre">plot_point_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.plot_point_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.plot_point_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize the som with all data as points around the neurons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – {numpy.ndarray} data to visualize with the SOM</p></li>
+<li><p><strong>targets</strong> – {list/array} array of target classes (0 to len(targetnames)) corresponding to data</p></li>
+<li><p><strong>targetnames</strong> – {list/array} names describing the target classes given in targets</p></li>
+<li><p><strong>filename</strong> – {str} optional, if given, the plot is saved to this location</p></li>
+<li><p><strong>colors</strong> – {list/array} optional, if given, different classes are colored in these colors</p></li>
+<li><p><strong>markers</strong> – {list/array} optional, if given, different classes are visualized with these markers</p></li>
+<li><p><strong>colormap</strong> – {str} colormap to use, select from matplolib sequential colormaps</p></li>
+<li><p><strong>example_dict</strong> – {dict} dictionary containing names of examples as keys and corresponding descriptor values
+as values. These examples will be mapped onto the density map and marked</p></li>
+<li><p><strong>density</strong> – {bool} whether to plot the density map with winner neuron counts in the background</p></li>
+<li><p><strong>activities</strong> – {list/array} list of activities (e.g. IC50 values) to use for coloring the points
+accordingly; high values will appear in blue, low values in green</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot shown or saved if a filename is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.plot_density_map">
+<span class="sig-name descname"><span class="pre">plot_density_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.plot_density_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.plot_density_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize the data density in different areas of the SOM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)</p></li>
+<li><p><strong>colormap</strong> – {str} colormap to use, select from matplolib sequential colormaps</p></li>
+<li><p><strong>filename</strong> – {str} optional, if given, the plot is saved to this location</p></li>
+<li><p><strong>example_dict</strong> – {dict} dictionary containing names of examples as keys and corresponding descriptor values
+as values. These examples will be mapped onto the density map and marked</p></li>
+<li><p><strong>internal</strong> – {bool} if True, the current plot will stay open to be used for other plot functions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot shown or saved if a filename is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.plot_class_density">
+<span class="sig-name descname"><span class="pre">plot_class_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actives'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.plot_class_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.plot_class_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a density map only for the given class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – {numpy.ndarray} data to visualize the SOM density (number of times a neuron was winner)</p></li>
+<li><p><strong>targets</strong> – {list/array} array of target classes (0 to len(targetnames)) corresponding to data</p></li>
+<li><p><strong>t</strong> – {int} target class to plot the density map for</p></li>
+<li><p><strong>name</strong> – {str} target name corresponding to target given in t</p></li>
+<li><p><strong>colormap</strong> – {str} colormap to use, select from matplolib sequential colormaps</p></li>
+<li><p><strong>example_dict</strong> – {dict} dictionary containing names of examples as keys and corresponding descriptor values
+as values. These examples will be mapped onto the density map and marked</p></li>
+<li><p><strong>filename</strong> – {str} optional, if given, the plot is saved to this location</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot shown or saved if a filename is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.plot_distance_map">
+<span class="sig-name descname"><span class="pre">plot_distance_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.plot_distance_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.plot_distance_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the distance map after training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>colormap</strong> – {str} colormap to use, select from matplolib sequential colormaps</p></li>
+<li><p><strong>filename</strong> – {str} optional, if given, the plot is saved to this location</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot shown or saved if a filename is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.plot_error_history">
+<span class="sig-name descname"><span class="pre">plot_error_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orange'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.plot_error_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.plot_error_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot the training reconstruction error history that was recorded during the fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color</strong> – {str} color of the line</p></li>
+<li><p><strong>filename</strong> – {str} optional, if given, the plot is saved to this location</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot shown or saved if a filename is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the SOM instance to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – {str} filename (best to end with .p)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>saved instance in file with name <code class="docutils literal notranslate"><span class="pre">filename</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="som.SOM.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/som.html#SOM.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#som.SOM.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a SOM instance from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – {str} filename (best to end with .p)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated instance with data from <code class="docutils literal notranslate"><span class="pre">filename</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/som.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="readme.html"
+                        title="previous chapter"><span class="section-number">1. </span>som-pbc Readme</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter"><span class="section-number">3. </span>Example Scripts</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/som.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="3. Example Scripts"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="readme.html" title="1. som-pbc Readme"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">som-pbc v1.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Documentation for the som module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017 - 2021 Alex Müller.
+      Last updated on Jul 02esc, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

@@ -8,6 +8,10 @@ from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
 
 
+__author__ = "Alex Müller"
+__docformat__ = "restructuredtext en"
+
+
 def man_dist_pbc(m, vector, shape=(10, 10)):
     """ Manhattan distance calculation of coordinates with periodic boundary condition
 
@@ -23,6 +27,9 @@ def man_dist_pbc(m, vector, shape=(10, 10)):
 
 
 class SOM(object):
+    """
+    Class implementing a self-organizing map with periodic boundary conditions. It has the following methods:
+    """
     def __init__(self, x, y, alpha_start=0.6, sigma_start=None, seed=None):
         """ Initialize the SOM object with a given map size
 

@@ -3,14 +3,14 @@
 from setuptools import setup
 
 
-with open('README.md', 'r') as f:
+with open('README.rst', 'r') as f:
     readme = f.read()
 
 with open('requirements.txt', 'r') as f:
     reqs = f.read().split('\n')
 
 setup(name='som-pbc',
-      version='1.0.0',
+      version='1.0.1',
       description='self organizing maps with periodic boundary conditions',
       long_description=readme,
       author='Alex Müller',
