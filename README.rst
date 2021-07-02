@@ -67,25 +67,25 @@ Then you can import and use the ``SOM`` class as follows:
 Training Error:
 ^^^^^^^^^^^^^^^
 
-.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/static/images/som_error.png?raw=true
-   :alt: Point Map
+.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/_static/som_error.png?raw=true
+   :alt: Training Error
 
 Point Map:
 ^^^^^^^^^^
 
-.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/static/images/som.png?raw=true
+.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/_static/som.png?raw=true
    :alt: Point Map
 
 Class Density:
 ^^^^^^^^^^^^^^
 
-.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/static/images/class_0.png?raw=true
+.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/_static/class_0.png?raw=true
    :alt: Class Density Map
 
 Distance Map:
 ^^^^^^^^^^^^^
 
-.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/static/images/distance_map.png?raw=true
+.. figure:: https://github.com/alexarnimueller/som/blob/master/docs/_static/distance_map.png?raw=true
    :alt: Distance Map
 
 The same way you can handle your own data.
