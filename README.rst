@@ -2,6 +2,11 @@ som-pbc Readme
 ==============
 .. image:: https://img.shields.io/pypi/v/som-pbc.svg
    :target: https://pypi.org/project/som-pbc/
+   :alt: pypi version
+
+.. image:: https://readthedocs.org/projects/som-pbc/badge/?version=latest
+   :target: https://som-pbc.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 A simple self-organizing map implementation in Python with periodic
 boundary conditions.
