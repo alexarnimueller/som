@@ -6,7 +6,7 @@ learning technique to efficiently create spatially organized internal representa
 example, SOMs are well-suited for the visualization of high-dimensional data. 
 
 This is a simple implementation of SOMs in Python. This SOM has periodic boundary conditions and therefore can be
-imagined as a "donut". The implementation uses `numpy`.
+imagined as a "donut". The implementation uses `numpy`, `scipy`, `scikit-learn` and `matplotlib`.
 
 ### Usage
 Download the file `som.py` and place it somewhere in your `PYTHONPATH`.
