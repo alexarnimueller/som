@@ -127,3 +127,8 @@ Feature Maps. Biol. Cybern. 1982, 43 (1), 59–69.
 This work was partially inspired by `ramalina's som
 implementation <https://github.com/ramarlina/som>`__ and `JustGlowing's
 minisom <https://github.com/JustGlowing/minisom>`__.
+
+Documentation:
+~~~~~~~~~~~~~~
+
+Documentation for som-pbc is hosted on `readthedocs.io <https://som-pbc.readthedocs.io/en/latest>`__.
