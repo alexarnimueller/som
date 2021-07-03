@@ -1,4 +1,4 @@
-som-pbc Readme
+som-pbc README
 ==============
 .. image:: https://img.shields.io/pypi/v/som-pbc.svg
    :target: https://pypi.org/project/som-pbc/
