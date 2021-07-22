@@ -7,7 +7,7 @@ with open('README.rst', 'r') as f:
     readme = f.read()
 
 setup(name='som-pbc',
-      version='1.0.1',
+      version='1.0.2',
       description='self organizing maps with periodic boundary conditions',
       long_description=readme,
       author='Alex Müller',
