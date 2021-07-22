@@ -6,9 +6,6 @@ from setuptools import setup
 with open('README.rst', 'r') as f:
     readme = f.read()
 
-with open('requirements.txt', 'r') as f:
-    reqs = f.read().split('\n')
-
 setup(name='som-pbc',
       version='1.0.1',
       description='self organizing maps with periodic boundary conditions',
@@ -28,5 +25,5 @@ setup(name='som-pbc',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.6'],
-      install_requires=reqs
+      install_requires=['numpy', 'scipy', 'matplotlib', 'scikit-learn']
       )
