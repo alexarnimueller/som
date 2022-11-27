@@ -8,7 +8,7 @@ Welcome to som-pbc's documentation!
 
 **Authors:** Alex Müller
 
-**Copyright:** (c) 2017 - 2021; Alex Müller
+**Copyright:** (c) 2017 - 2022; Alex Müller
 
 This package contains a simple self-organizing map implementation in Python
 with periodic boundary conditions.

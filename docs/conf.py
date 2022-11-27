@@ -10,15 +10,15 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'som-pbc'
-copyright = '2021, Alex Müller'
+copyright = '2022, Alex Müller'
 author = 'Alex Müller'
 
 # The full version, including alpha/beta/rc tags
